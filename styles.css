@@ -61,23 +61,23 @@ p {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
 }
 
 .btn-secondary {
     background: transparent;
-    color: #667eea;
-    border-color: #667eea;
+    color: #10b981;
+    border-color: #10b981;
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: #10b981;
     color: white;
     transform: translateY(-2px);
 }
@@ -107,7 +107,7 @@ p {
     font-size: 1.5rem;
     font-weight: 700;
     text-decoration: none;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -127,7 +127,7 @@ p {
 }
 
 .nav-link:hover {
-    color: #667eea;
+    color: #10b981;
 }
 
 .nav-link::after {
@@ -137,7 +137,7 @@ p {
     height: 2px;
     bottom: -5px;
     left: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     transition: width 0.3s ease;
 }
 
@@ -156,7 +156,7 @@ p {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     position: relative;
     overflow: hidden;
@@ -249,7 +249,7 @@ section {
     content: '';
     width: 60px;
     height: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     position: absolute;
     bottom: -10px;
     left: 50%;
@@ -288,7 +288,7 @@ section {
     display: block;
     font-size: 2.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -330,7 +330,7 @@ section {
 }
 
 .skill-tag {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 25px;
@@ -381,13 +381,13 @@ section {
 }
 
 .project-links a {
-    color: #667eea;
+    color: #10b981;
     font-size: 1.2rem;
     transition: color 0.3s ease;
 }
 
 .project-links a:hover {
-    color: #764ba2;
+    color: #059669;
 }
 
 .project-description {
@@ -440,12 +440,12 @@ section {
 }
 
 .contact-method i {
-    color: #667eea;
+    color: #10b981;
     width: 20px;
 }
 
 .contact-method a {
-    color: #667eea;
+    color: #10b981;
     text-decoration: none;
 }
 
@@ -483,7 +483,7 @@ section {
 }
 
 .social-link i {
-    color: #667eea;
+    color: #10b981;
     font-size: 1.2rem;
 }
 
