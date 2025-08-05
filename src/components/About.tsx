@@ -46,7 +46,7 @@ const About = () => {
     }, stepDuration)
 
     return () => clearInterval(timer)
-  }, [isVisible])
+  }, [isVisible, targetCounts.repos, targetCounts.experience, targetCounts.followers])
 
   return (
     <section ref={ref} id="about" className="py-20 bg-white">
@@ -64,7 +64,7 @@ const About = () => {
           <div className="space-y-8">
             <BrutalCard className="bg-brutal-gradient-2 text-white transform rotate-1">
               <p className="text-lg font-bold leading-relaxed">
-                I'M A PASSIONATE SOFTWARE DEVELOPER FROM HO CHI MINH CITY, VIETNAM, 
+                I&apos;M A PASSIONATE SOFTWARE DEVELOPER FROM HO CHI MINH CITY, VIETNAM, 
                 WITH EXPERTISE IN AI/ML, BLOCKCHAIN TECHNOLOGY, AND FULL-STACK DEVELOPMENT. 
                 I SPECIALIZE IN BUILDING INTELLIGENT SYSTEMS THAT SOLVE REAL-WORLD PROBLEMS.
               </p>
@@ -73,7 +73,7 @@ const About = () => {
             <BrutalCard className="bg-brutal-yellow transform -rotate-1">
               <p className="text-lg font-bold leading-relaxed">
                 MY FOCUS IS ON CREATING AI-POWERED SOLUTIONS, MULTI-AGENT SYSTEMS, 
-                AND SECURE BLOCKCHAIN APPLICATIONS. I'M PARTICULARLY INTERESTED IN 
+                AND SECURE BLOCKCHAIN APPLICATIONS. I&apos;M PARTICULARLY INTERESTED IN 
                 THE INTERSECTION OF AI AND WEB3 TECHNOLOGIES.
               </p>
             </BrutalCard>

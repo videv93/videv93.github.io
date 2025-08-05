@@ -57,10 +57,10 @@ const Contact = () => {
           <div className="space-y-8">
             <BrutalCard className="bg-white transform rotate-1">
               <h3 className="text-3xl font-black uppercase mb-4">
-                LET'S WORK TOGETHER
+                LET&apos;S WORK TOGETHER
               </h3>
               <p className="text-lg font-bold leading-relaxed mb-6">
-                I'M ALWAYS INTERESTED IN NEW OPPORTUNITIES AND COLLABORATIONS. 
+                I&apos;M ALWAYS INTERESTED IN NEW OPPORTUNITIES AND COLLABORATIONS. 
                 WHETHER YOU HAVE A PROJECT IN MIND OR JUST WANT TO CONNECT, 
                 FEEL FREE TO REACH OUT!
               </p>
@@ -134,7 +134,7 @@ const Contact = () => {
             <BrutalCard className="bg-brutal-purple text-white transform rotate-1">
               <div className="text-center">
                 <div className="text-2xl font-black uppercase mb-2">
-                  "BUILDING THE FUTURE"
+                  &ldquo;BUILDING THE FUTURE&rdquo;
                 </div>
                 <div className="text-lg font-bold">
                   ONE LINE OF CODE AT A TIME 🚀
