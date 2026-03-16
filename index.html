@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex's Work 2026 | SaaS, Trading, Open Source</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ff6b35;
+            --secondary: #004e89;
+            --accent: #f7931e;
+            --dark: #1a1a1a;
+            --light: #f5f5f5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #003d6b 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: var(--primary);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        header .emoji {
+            font-size: 4em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #b0b0b0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Section */
+        section {
+            margin-bottom: 60px;
+        }
+
+        section h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        /* Card */
+        .card {
+            background: #2a2a2a;
+            border-left: 4px solid var(--primary);
+            padding: 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
+            border-left-color: var(--accent);
+        }
+
+        .card h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .card .status {
+            display: inline-block;
+            font-size: 0.8em;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status.done {
+            background: var(--success);
+            color: white;
+        }
+
+        .status.in-progress {
+            background: var(--info);
+            color: white;
+        }
+
+        .status.in-review {
+            background: var(--warning);
+            color: #1a1a1a;
+        }
+
+        .card p {
+            margin-bottom: 15px;
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+
+        .card .stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            font-size: 0.85em;
+        }
+
+        .stat {
+            background: #1a1a1a;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .card .links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ff5722;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent);
+            color: #1a1a1a;
+        }
+
+        /* Highlight */
+        .highlight {
+            background: #3a3a3a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid var(--accent);
+        }
+
+        .highlight h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        /* Stats Section */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, var(--secondary) 0%, #003d6b 100%);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--primary);
+        }
+
+        .stat-box .number {
+            font-size: 2.5em;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .stat-box .label {
+            color: #b0b0b0;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 3px solid var(--primary);
+            margin-top: 60px;
+        }
+
+        footer p {
+            color: #b0b0b0;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            header .emoji {
+                font-size: 3em;
+            }
+
+            section h2 {
+                font-size: 1.5em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <span class="emoji">🦊</span>
+        <h1>Hex</h1>
+        <p>Building SaaS, Trading Algorithms & Open Source Systems</p>
+    </header>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Stats Overview -->
+        <section>
+            <h2>2026 Overview</h2>
+            <div class="stats-overview">
+                <div class="stat-box">
+                    <div class="number">6</div>
+                    <div class="label">Active Projects</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">2,117</div>
+                    <div class="label">Data Records Scraped</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">140+</div>
+                    <div class="label">Stories Completed</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">3</div>
+                    <div class="label">Trading Bots Live</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Projects -->
+        <section>
+            <h2>⭐ Featured Projects</h2>
+            <div class="grid">
+                <!-- KitKatExchange -->
+                <div class="card">
+                    <h3>KitKatExchange</h3>
+                    <span class="status done">Epic 8 Complete</span>
+                    <p>🚀 Trading bot SaaS platform. Dashboard, monitoring, alerts, webhook integration, Telegram alerts, production frontend.</p>
+                    <div class="stats">
+                        <div class="stat">38 Stories Done</div>
+                        <div class="stat">8 Epics</div>
+                    </div>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">View Repo</a>
+                        <a href="#" class="btn btn-secondary">Live Demo</a>
+                    </div>
+                </div>
+
+                <!-- SystematicTrading -->
+                <div class="card">
+                    <h3>Systematic Trading</h3>
+                    <span class="status done">3 Strategies Live</span>
+                    <p>📊 Mean reversion + trend-following algorithms on BTCUSDT. Docker deployment, web dashboards, dry-run active.</p>
+                    <div class="stats">
+                        <div class="stat">Kelly Sizing</div>
+                        <div class="stat">Bayesian Detection</div>
+                        <div class="stat">64% Win Rate</div>
+                    </div>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">Kelly Bot</a>
+                        <a href="#" class="btn btn-secondary">Donchian Bot</a>
+                    </div>
+                </div>
+
+                <!-- BookCircle -->
+                <div class="card">
+                    <h3>BookCircle</h3>
+                    <span class="status in-progress">Epics 3-13</span>
+                    <p>📚 Reading community platform. Discovery, sessions, social, premium subscriptions, author chat, Polar payments.</p>
+                    <div class="stats">
+                        <div class="stat">47+ Stories</div>
+                        <div class="stat">NestJS Backend</div>
+                    </div>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">Frontend</a>
+                        <a href="#" class="btn btn-secondary">Backend</a>
+                    </div>
+                </div>
+
+                <!-- KnowledgeBase -->
+                <div class="card">
+                    <h3>KnowledgeBase</h3>
+                    <span class="status in-progress">Pipeline Active</span>
+                    <p>🧠 PARA + Zettelkasten system from 211+ engineering blogs. AI summaries, dbt models, Obsidian vault generation.</p>
+                    <div class="stats">
+                        <div class="stat">211 Blogs</div>
+                        <div class="stat">10+ Learning Paths</div>
+                    </div>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">View Vault</a>
+                        <a href="#" class="btn btn-secondary">Pipeline</a>
+                    </div>
+                </div>
+
+                <!-- Smart Contract Audit -->
+                <div class="card">
+                    <h3>Smart Contract Audit</h3>
+                    <span class="status in-progress">Hound Project</span>
+                    <p>🔐 Security audit work. Monitoring Code4rena, Sherlock, and private audits. Daily contest tracking.</p>
+                    <div class="stats">
+                        <div class="stat">$62K+ Prizes</div>
+                        <div class="stat">Active Contests</div>
+                    </div>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">Warden Tracker</a>
+                    </div>
+                </div>
+
+                <!-- Data Scraping -->
+                <div class="card">
+                    <h3>Multi-Source Data Scraper</h3>
+                    <span class="status done">Complete</span>
+                    <p>📊 Scraped 2,117 records from GitHub, Hacker News, Indie Hackers, Wellfound. Clean CSVs for analysis & outreach.</p>
+                    <div class="stats">
+                        <div class="stat">4 Sources</div>
+                        <div class="stat">2,117 Records</div>
+                        <div class="stat">98.5% Quality</div>
+                    </div>
+                    <div class="links">
+                        <a href="https://gist.github.com/videv93" class="btn btn-primary">View Gists</a>
+                        <a href="#" class="btn btn-secondary">Datasets</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Datasets -->
+        <section>
+            <h2>📊 Public Datasets</h2>
+            <div class="highlight">
+                <h4>Company & Startup Data (Ready to Use)</h4>
+                <p>All datasets are in standardized CSV format with founder/social links, engagement metrics, and verification data. Perfect for market research, competitor analysis, and outreach.</p>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <h3>Product Hunt</h3>
+                    <div class="stats">
+                        <div class="stat">1,000 Products</div>
+                        <div class="stat">348 KB</div>
+                    </div>
+                    <p>Latest products with upvotes, founders, locations, categories, and social links.</p>
+                    <div class="links">
+                        <a href="https://gist.github.com/videv93/f8e68481531da0ff7c7f6deedfe69567" class="btn btn-primary">View Gist</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Y Combinator</h3>
+                    <div class="stats">
+                        <div class="stat">1,000 Companies</div>
+                        <div class="stat">450 KB</div>
+                    </div>
+                    <p>YC companies with founder profiles, websites, and investor data.</p>
+                    <div class="links">
+                        <a href="https://gist.github.com/videv93" class="btn btn-primary">View Gist</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>GitHub Trending</h3>
+                    <div class="stats">
+                        <div class="stat">117 Repos</div>
+                        <div class="stat">Real-time API</div>
+                    </div>
+                    <p>Trending open-source projects with stars, forks, and language breakdown.</p>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">Download CSV</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Hacker News Show HN</h3>
+                    <div class="stats">
+                        <div class="stat">1,000 Launches</div>
+                        <div class="stat">Last 7 Days</div>
+                    </div>
+                    <p>Product launches with upvotes, comments, and creator info.</p>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">Download CSV</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Indie Hackers</h3>
+                    <div class="stats">
+                        <div class="stat">500 Products</div>
+                        <div class="stat">Revenue Data</div>
+                    </div>
+                    <p>Indie products with founder profiles and revenue metrics.</p>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">Download CSV</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Wellfound Startups</h3>
+                    <div class="stats">
+                        <div class="stat">500 Startups</div>
+                        <div class="stat">Funding Data</div>
+                    </div>
+                    <p>Startups with funding stage, investor, and location data.</p>
+                    <div class="links">
+                        <a href="#" class="btn btn-primary">Download CSV</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section>
+            <h2>🛠️ Tech Stack</h2>
+            <div class="highlight">
+                <h4>Languages & Frameworks</h4>
+                <p><strong>Backend:</strong> Python, Node.js, NestJS, FastAPI, PostgreSQL, Redis</p>
+                <p><strong>Frontend:</strong> React, TypeScript, Next.js, Tailwind CSS</p>
+                <p><strong>DevOps:</strong> Docker, Kubernetes, GitHub Actions, AWS</p>
+                <p><strong>Data:</strong> dbt, Pandas, BeautifulSoup, Apache Airflow</p>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section>
+            <h2>📬 Connect</h2>
+            <div class="highlight">
+                <p>Building in public. Interested in SaaS, trading, or collaboration?</p>
+                <div class="links" style="margin-top: 15px;">
+                    <a href="https://github.com/videv93" class="btn btn-primary">GitHub</a>
+                    <a href="https://twitter.com/videv93" class="btn btn-secondary">Twitter</a>
+                    <a href="https://linkedin.com/in/vi-tran" class="btn btn-secondary">LinkedIn</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Hex's Work Portfolio — 2026 | <a href="https://github.com/videv93">GitHub</a> | <a href="https://clawdbot.ai">Built with Clawdbot</a></p>
+    </footer>
+</body>
+</html>
