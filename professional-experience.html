@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Experience | syscraft906</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #004e89 0%, #003d6b 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff6b35;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        header p {
+            font-size: 1.05em;
+            color: #b0b0b0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .profile-header {
+            background: rgba(0, 78, 137, 0.2);
+            border: 1px solid #004e89;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .profile-header h2 {
+            font-size: 1.8em;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            color: #d0d0d0;
+        }
+
+        .info-label {
+            color: #b0b0b0;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .skills {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .skills h4 {
+            color: #f7931e;
+            margin-bottom: 12px;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid #ff6b35;
+            color: #ff6b35;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .projects {
+            margin-top: 40px;
+        }
+
+        .projects h2 {
+            font-size: 1.8em;
+            color: #f7931e;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f7931e;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .project-card {
+            background: rgba(0, 78, 137, 0.2);
+            border: 1px solid #004e89;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 107, 53, 0.15);
+            border-color: #ff6b35;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.2);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .project-header h3 {
+            font-size: 1.4em;
+            color: #ff6b35;
+        }
+
+        .project-date {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid #ff6b35;
+            color: #ff6b35;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .company {
+            color: #f7931e;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .project-description {
+            color: #d0d0d0;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .project-description ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .project-description li {
+            margin-bottom: 8px;
+            color: #b0b0b0;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .tech {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            padding: 20px;
+            border-radius: 4px;
+            color: #fcd34d;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background: #004e89;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 2px solid #ff6b35;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .project-header {
+                flex-direction: column;
+            }
+
+            .project-header h3 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Professional Experience</h1>
+        <p>Full Stack Developer | 8+ Years | React, Node.js, TypeScript</p>
+    </header>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <!-- Profile Summary -->
+        <div class="profile-header">
+            <h2>VI TRAN</h2>
+            <div class="profile-info">
+                <div class="info-item">
+                    <div class="info-label">Location</div>
+                    <div>Ho Chi Minh, Vietnam</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Phone</div>
+                    <div>+84-334-331-483</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Email</div>
+                    <div>videv93@gmail.com</div>
+                </div>
+            </div>
+
+            <div class="skills">
+                <h4>Core Skills</h4>
+                <div class="skill-tags">
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">React.js</span>
+                    <span class="skill-tag">TypeScript</span>
+                    <span class="skill-tag">Next.js</span>
+                    <span class="skill-tag">PostgreSQL</span>
+                    <span class="skill-tag">MongoDB</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">Docker</span>
+                    <span class="skill-tag">Kubernetes</span>
+                    <span class="skill-tag">CI/CD</span>
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Airflow</span>
+                    <span class="skill-tag">dbt</span>
+                    <span class="skill-tag">Blockchain</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Section -->
+        <section class="projects">
+            <h2>Projects & Experience</h2>
+
+            <!-- Project 1: Citics -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Real Estate Management Platform</h3>
+                    <div class="project-date">Jan 2025 - Present</div>
+                </div>
+                <div class="company">Citics</div>
+                <div class="project-description">
+                    <p>Built comprehensive real estate management platform with advanced property listing, mapping, and verification workflows.</p>
+                    <ul>
+                        <li>Integrated Google Maps API with custom vector tiles for Vietnamese cadastral data visualization and coordinate transformation</li>
+                        <li>Developed complex form management system with React Hook Form, Zod validation, and drag-and-drop file uploads</li>
+                        <li>Implemented advanced filtering and search capabilities with cascading location selects and multi-range filters</li>
+                        <li>Created scalable architecture with Docker containerization, internationalization, and comprehensive TypeScript type safety</li>
+                    </ul>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech">Next.js 15</span>
+                    <span class="tech">React 19</span>
+                    <span class="tech">TypeScript</span>
+                    <span class="tech">Tailwind CSS</span>
+                    <span class="tech">Google Maps API</span>
+                    <span class="tech">Docker</span>
+                    <span class="tech">PostgreSQL</span>
+                    <span class="tech">Sentry</span>
+                    <span class="tech">PostHog</span>
+                </div>
+            </div>
+
+            <!-- Project 2: Heycounsel -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Enterprise Web Applications</h3>
+                    <div class="project-date">Oct 2024 - Dec 2024</div>
+                </div>
+                <div class="company">Heycounsel, Devbase</div>
+                <div class="project-description">
+                    <p>Architected modern web applications leveraging Server Components and App Router for enhanced performance.</p>
+                    <ul>
+                        <li>Designed scalable frontends with server-side and client-side rendering strategies</li>
+                        <li>Implemented enterprise-level authentication using Supabase Auth with custom policies</li>
+                        <li>Optimized database performance through Supabase PostgreSQL extensions and Edge Functions</li>
+                    </ul>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech">Next.js 14</span>
+                    <span class="tech">Supabase Auth</span>
+                    <span class="tech">PostgreSQL</span>
+                    <span class="tech">Edge Functions</span>
+                    <span class="tech">TypeScript</span>
+                </div>
+            </div>
+
+            <!-- Project 3: Paramount -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Modern Web Application Architecture</h3>
+                    <div class="project-date">Aug 2024 - Oct 2024</div>
+                </div>
+                <div class="company">Paramount, Devbase</div>
+                <div class="project-description">
+                    <p>Led development teams in adopting type-safe practices and modern web architecture patterns.</p>
+                    <ul>
+                        <li>Architected modern web applications using Next.js 14 with Server Components</li>
+                        <li>Designed scalable frontends with efficient data fetching patterns</li>
+                        <li>Implemented enterprise-level authentication and authorization</li>
+                        <li>Led teams in adopting TypeScript best practices across full stack</li>
+                    </ul>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech">Next.js 14</span>
+                    <span class="tech">TypeScript</span>
+                    <span class="tech">Supabase</span>
+                    <span class="tech">PostgreSQL</span>
+                    <span class="tech">React</span>
+                </div>
+            </div>
+
+            <!-- Project 4: SupplyHive -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Supply Chain & Logistics Platform</h3>
+                    <div class="project-date">Dec 2022 - Aug 2024</div>
+                </div>
+                <div class="company">SupplyHive, Devbase</div>
+                <div class="project-description">
+                    <p>Senior Full Stack Developer role - details coming soon</p>
+                    <div class="empty-state">
+                        Project details to be added. Check back soon!
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech">Full Stack</span>
+                    <span class="tech">React</span>
+                    <span class="tech">Node.js</span>
+                    <span class="tech">PostgreSQL</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Projects (Templates) -->
+        <section class="projects">
+            <h2 style="margin-top: 50px;">Additional Projects</h2>
+
+            <!-- Empty Card Template 1 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Project Name</h3>
+                    <div class="project-date">Date Range</div>
+                </div>
+                <div class="company">Company/Client Name</div>
+                <div class="project-description">
+                    <div class="empty-state">
+                        📝 Project details coming soon...
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech">Tech 1</span>
+                    <span class="tech">Tech 2</span>
+                </div>
+            </div>
+
+            <!-- Empty Card Template 2 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Project Name</h3>
+                    <div class="project-date">Date Range</div>
+                </div>
+                <div class="company">Company/Client Name</div>
+                <div class="project-description">
+                    <div class="empty-state">
+                        📝 Project details coming soon...
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech">Tech 1</span>
+                    <span class="tech">Tech 2</span>
+                </div>
+            </div>
+
+            <!-- Empty Card Template 3 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3>Project Name</h3>
+                    <div class="project-date">Date Range</div>
+                </div>
+                <div class="company">Company/Client Name</div>
+                <div class="project-description">
+                    <div class="empty-state">
+                        📝 Project details coming soon...
+                    </div>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech">Tech 1</span>
+                    <span class="tech">Tech 2</span>
+                </div>
+            </div>
+        </section>
+
+        <div style="margin-top: 60px; padding: 30px; background: rgba(0, 78, 137, 0.15); border-left: 3px solid #ff6b35; border-radius: 4px; color: #d0d0d0;">
+            <h3 style="color: #ff6b35; margin-bottom: 10px;">Languages</h3>
+            <p>🇻🇳 Vietnamese (Native) | 🇬🇧 English (Fluent)</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Professional Experience | syscraft906</p>
+        <p><a href="/">Home</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+    </footer>
+</body>
+</html>
