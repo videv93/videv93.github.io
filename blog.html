@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | syscraft906</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #004e89 0%, #003d6b 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff6b35;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        header p {
+            font-size: 1.05em;
+            color: #b0b0b0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .blog-card {
+            background: rgba(0, 78, 137, 0.2);
+            border: 1px solid #004e89;
+            border-radius: 8px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            background: rgba(255, 107, 53, 0.15);
+            border-color: #ff6b35;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+        }
+
+        .blog-card h3 {
+            font-size: 1.3em;
+            color: #f7931e;
+            margin-bottom: 12px;
+        }
+
+        .blog-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+            color: #b0b0b0;
+            margin-bottom: 15px;
+        }
+
+        .blog-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .blog-excerpt {
+            color: #d0d0d0;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            line-height: 1.7;
+        }
+
+        .read-more {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #ff6b35;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .read-more:hover {
+            background: #ff5722;
+            transform: translateX(5px);
+        }
+
+        .blog-tag {
+            display: inline-block;
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid #ff6b35;
+            color: #ff6b35;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            margin-right: 8px;
+            margin-top: 10px;
+        }
+
+        .coming-soon {
+            color: #f7931e;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        footer {
+            background: #004e89;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 2px solid #ff6b35;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📝 Blog</h1>
+        <p>Building in public. Systems, trading, and engineering insights.</p>
+    </header>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <div class="blog-grid">
+            <!-- Blog Post 1 -->
+            <div class="blog-card">
+                <h3>Linux Package Management Systems Explained</h3>
+                <div class="blog-meta">
+                    <span>📅 March 16, 2026</span>
+                    <span>📖 10 min</span>
+                </div>
+                <p class="blog-excerpt">
+                    Complete guide to Linux package management. Learn how RPM, DPKG, YUM, and APT work, their differences, and when to use each one. Includes practical examples and best practices for production systems.
+                </p>
+                <div>
+                    <span class="blog-tag">Linux</span>
+                    <span class="blog-tag">DevOps</span>
+                    <span class="blog-tag">Systems</span>
+                </div>
+                <a href="/blog-linux-package-management.html" class="read-more">Read Article →</a>
+            </div>
+
+            <!-- Blog Post 2 (Coming Soon) -->
+            <div class="blog-card">
+                <h3>Building a Trading Bot SaaS: KitKatExchange</h3>
+                <div class="blog-meta">
+                    <span class="coming-soon">⏳ Coming Soon</span>
+                </div>
+                <p class="blog-excerpt">
+                    Behind-the-scenes look at building a SaaS trading platform. From architecture decisions to production deployment, learn how KitKatExchange went from idea to beta users.
+                </p>
+                <div>
+                    <span class="blog-tag">SaaS</span>
+                    <span class="blog-tag">Trading</span>
+                    <span class="blog-tag">Backend</span>
+                </div>
+                <a href="#" class="read-more" style="opacity: 0.5; pointer-events: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 3 (Coming Soon) -->
+            <div class="blog-card">
+                <h3>Mean Reversion vs Trend Following: Backtest Results</h3>
+                <div class="blog-meta">
+                    <span class="coming-soon">⏳ Coming Soon</span>
+                </div>
+                <p class="blog-excerpt">
+                    Detailed comparison of two trading strategies on BTCUSDT. Includes backtest results, live performance metrics, and lessons learned deploying algorithms at scale.
+                </p>
+                <div>
+                    <span class="blog-tag">Trading</span>
+                    <span class="blog-tag">Algorithms</span>
+                    <span class="blog-tag">Backtest</span>
+                </div>
+                <a href="#" class="read-more" style="opacity: 0.5; pointer-events: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 4 (Coming Soon) -->
+            <div class="blog-card">
+                <h3>Smart Contract Audit: Critical Vulnerabilities I Found</h3>
+                <div class="blog-meta">
+                    <span class="coming-soon">⏳ Coming Soon</span>
+                </div>
+                <p class="blog-excerpt">
+                    Real-world examples of critical security vulnerabilities in smart contracts. Learn what to look for during audits and how to prevent common pitfalls in DeFi protocols.
+                </p>
+                <div>
+                    <span class="blog-tag">Security</span>
+                    <span class="blog-tag">Solidity</span>
+                    <span class="blog-tag">Audit</span>
+                </div>
+                <a href="#" class="read-more" style="opacity: 0.5; pointer-events: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 5 (Coming Soon) -->
+            <div class="blog-card">
+                <h3>Building a Learning System: 211 Engineering Blogs</h3>
+                <div class="blog-meta">
+                    <span class="coming-soon">⏳ Coming Soon</span>
+                </div>
+                <p class="blog-excerpt">
+                    How I built a PARA + Zettelkasten system from 211 engineering blogs using AI summaries and dbt pipelines. A practical guide to knowledge management at scale.
+                </p>
+                <div>
+                    <span class="blog-tag">Learning</span>
+                    <span class="blog-tag">Data</span>
+                    <span class="blog-tag">Systems</span>
+                </div>
+                <a href="#" class="read-more" style="opacity: 0.5; pointer-events: none;">Coming Soon</a>
+            </div>
+
+            <!-- Blog Post 6 (Coming Soon) -->
+            <div class="blog-card">
+                <h3>Systems Thinking for Engineers</h3>
+                <div class="blog-meta">
+                    <span class="coming-soon">⏳ Coming Soon</span>
+                </div>
+                <p class="blog-excerpt">
+                    Apply systems thinking principles to software engineering, infrastructure design, and product development. Real examples from building at scale.
+                </p>
+                <div>
+                    <span class="blog-tag">Engineering</span>
+                    <span class="blog-tag">Architecture</span>
+                    <span class="blog-tag">Thinking</span>
+                </div>
+                <a href="#" class="read-more" style="opacity: 0.5; pointer-events: none;">Coming Soon</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Blog | syscraft906 | Building in public</p>
+        <p><a href="/">Home</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+    </footer>
+</body>
+</html>
