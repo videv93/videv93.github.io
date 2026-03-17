@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties of Probability: Derived Rules and Formulas | syscraft906</title>
+    <meta name="description" content="Master the key properties of probability. Learn complement rule, addition rule, conditional probability, and more - all derived from Kolmogorov's axioms.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            line-height: 1.8;
+        }
+
+        header {
+            background: linear-gradient(135deg, #004e89 0%, #003d6b 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff6b35;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .meta {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+
+        .meta span {
+            margin-right: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        article {
+            background: rgba(0, 78, 137, 0.1);
+            border-left: 4px solid #ff6b35;
+            padding: 40px;
+            border-radius: 4px;
+        }
+
+        article h2 {
+            font-size: 1.8em;
+            color: #f7931e;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f7931e;
+            padding-bottom: 10px;
+        }
+
+        article h3 {
+            font-size: 1.3em;
+            color: #ff6b35;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        article p {
+            margin-bottom: 15px;
+            color: #d0d0d0;
+            line-height: 1.9;
+        }
+
+        article ul, article ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+            color: #d0d0d0;
+        }
+
+        article li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background: #1a1a1a;
+            border-left: 3px solid #ff6b35;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-radius: 4px;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #10b981;
+            font-size: 0.95em;
+        }
+
+        .property-box {
+            background: rgba(255, 107, 53, 0.15);
+            border: 2px solid #ff6b35;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 4px;
+        }
+
+        .property-box h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .property-box .proof {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: #b0b0b0;
+        }
+
+        .equation {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #10b981;
+            text-align: center;
+        }
+
+        .highlight {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid #10b981;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #b0b0b0;
+        }
+
+        .tip {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #93c5fd;
+        }
+
+        .example-box {
+            background: rgba(100, 150, 200, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #004e89;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 2px solid #ff6b35;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            article {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Properties of Probability: Derived Rules and Formulas</h1>
+        <div class="meta">
+            <span>📅 March 17, 2026</span>
+            <span>👤 syscraft906</span>
+            <span>📖 16 min read</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <a href="/blog.html" class="back-link">← Back to Blog</a>
+
+        <article>
+            <h2>Introduction</h2>
+            <p>
+                In the previous post, we learned about Kolmogorov's axioms — the three foundational rules of probability. But how do we actually <em>use</em> these axioms?
+            </p>
+            <p>
+                That's where <strong>properties of probability</strong> come in. These are rules and formulas derived directly from the axioms. They tell us:
+            </p>
+            <ul>
+                <li>How to handle opposite events</li>
+                <li>How to combine probabilities of different events</li>
+                <li>How to reason about conditional probabilities</li>
+                <li>When and how to multiply probabilities</li>
+            </ul>
+            <p>
+                In this post, we'll explore the major properties of probability, prove them from the axioms, and see how to apply them in practice.
+            </p>
+
+            <h2>Property 1: Probability of the Complement</h2>
+            <p>
+                The complement of event A (denoted A' or A^c) is the event that A does NOT occur.
+            </p>
+
+            <div class="property-box">
+                <h4>Complement Rule</h4>
+                <div class="equation">
+                    P(A') = 1 - P(A)
+                </div>
+                <div class="proof">
+                    <strong>Proof:</strong> The event space can be split into A and A' (mutually exclusive). By Axiom 3: P(A ∪ A') = P(A) + P(A'). By Axiom 2: P(A ∪ A') = 1. Therefore: P(A) + P(A') = 1, so P(A') = 1 - P(A).
+                </div>
+            </div>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                If the probability of rain tomorrow is 0.3, then the probability of no rain is:
+                <pre><code>P(no rain) = 1 - P(rain) = 1 - 0.3 = 0.7</code></pre>
+            </div>
+
+            <h2>Property 2: Probability of the Impossible Event</h2>
+
+            <div class="property-box">
+                <h4>Impossible Event</h4>
+                <div class="equation">
+                    P(∅) = 0
+                </div>
+                <p>The probability of an impossible event (the empty set ∅) is zero.</p>
+                <div class="proof">
+                    <strong>Proof:</strong> The empty set is the complement of the entire sample space. P(∅) = 1 - P(S) = 1 - 1 = 0.
+                </div>
+            </div>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                Rolling a standard die and getting a 7:
+                <pre><code>P(rolling a 7) = 0  (impossible on a 6-sided die)</code></pre>
+            </div>
+
+            <h2>Property 3: Bounded Probability</h2>
+
+            <div class="property-box">
+                <h4>Probability Bounds</h4>
+                <div class="equation">
+                    0 ≤ P(A) ≤ 1  for all events A
+                </div>
+                <p>Probabilities are always between 0 and 1 (inclusive).</p>
+                <div class="proof">
+                    <strong>Proof:</strong> From Axiom 1: P(A) ≥ 0. We can't exceed the entire sample space, so P(A) ≤ P(S) = 1 (by Axiom 2). Thus: 0 ≤ P(A) ≤ 1.
+                </div>
+            </div>
+
+            <h2>Property 4: Monotonicity</h2>
+
+            <div class="property-box">
+                <h4>Monotonicity</h4>
+                <p>If event A is a subset of event B (all outcomes in A are in B), denoted A ⊆ B, then:</p>
+                <div class="equation">
+                    P(A) ≤ P(B)
+                </div>
+                <div class="proof">
+                    <strong>Proof:</strong> If A ⊆ B, then B can be split into A and (B \ A). By Axiom 3: P(B) = P(A) + P(B \ A). Since P(B \ A) ≥ 0 (Axiom 1), we have P(B) ≥ P(A).
+                </div>
+            </div>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                Drawing from a deck of cards:
+                <pre><code>A = Drawing a heart
+B = Drawing a red card
+
+Since all hearts are red: A ⊆ B
+Therefore: P(heart) ≤ P(red)
+Verification: P(heart) = 13/52, P(red) = 26/52
+13/52 ≤ 26/52 ✓</code></pre>
+            </div>
+
+            <h2>Property 5: Addition Rule (General Form)</h2>
+
+            <div class="property-box">
+                <h4>General Addition Rule</h4>
+                <p>For any two events A and B:</p>
+                <div class="equation">
+                    P(A ∪ B) = P(A) + P(B) - P(A ∩ B)
+                </div>
+                <div class="proof">
+                    <strong>Proof:</strong> A ∪ B can be decomposed into three mutually exclusive parts: A only, B only, and A ∩ B. By Axiom 3, we add these. Working through the algebra leads to the formula above.
+                </div>
+            </div>
+
+            <h3>Why the "-P(A ∩ B)"?</h3>
+            <p>
+                When we add P(A) + P(B), we count the overlap (A ∩ B) twice. So we subtract it once to correct for this double-counting.
+            </p>
+
+            <h3>Special Case: Mutually Exclusive Events</h3>
+            <p>
+                When A and B cannot both occur (mutually exclusive), P(A ∩ B) = 0, so:
+            </p>
+            <div class="equation">
+                P(A ∪ B) = P(A) + P(B)  [when A and B are mutually exclusive]
+            </div>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                <strong>Drawing a card:</strong> What's the probability of drawing a King or a Heart?
+                <pre><code>A = Drawing a King (4 cards)
+B = Drawing a Heart (13 cards)
+A ∩ B = Drawing a King of Hearts (1 card)
+
+P(King ∪ Heart) = P(King) + P(Heart) - P(King of Hearts)
+                = 4/52 + 13/52 - 1/52
+                = 16/52
+                ≈ 30.77%</code></pre>
+            </div>
+
+            <h2>Property 6: Inclusion-Exclusion Principle</h2>
+
+            <div class="property-box">
+                <h4>Three Events</h4>
+                <p>For three events A, B, and C:</p>
+                <div class="equation">
+                    P(A ∪ B ∪ C) = P(A) + P(B) + P(C) - P(A ∩ B) - P(A ∩ C) - P(B ∩ C) + P(A ∩ B ∩ C)
+                </div>
+            </div>
+
+            <h3>Intuition</h3>
+            <p>
+                We add all individual probabilities, subtract pairwise overlaps (to avoid double-counting), then add back the triple overlap (which we subtracted too many times).
+            </p>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                <strong>Survey problem:</strong> Among 100 people, 50 drink coffee, 40 drink tea, 30 drink juice. 20 drink both coffee and tea, 15 drink both coffee and juice, 10 drink both tea and juice, and 5 drink all three. How many drink at least one?
+                <pre><code>P(C ∪ T ∪ J) = 50 + 40 + 30 - 20 - 15 - 10 + 5 = 80
+
+80 out of 100 people drink at least one beverage.</code></pre>
+            </div>
+
+            <h2>Property 7: Conditional Probability</h2>
+
+            <div class="property-box">
+                <h4>Conditional Probability Definition</h4>
+                <p>The probability of A given that B has occurred:</p>
+                <div class="equation">
+                    P(A|B) = P(A ∩ B) / P(B)    [where P(B) > 0]
+                </div>
+            </div>
+
+            <h3>Interpretation</h3>
+            <p>
+                We're restricting the sample space to only outcomes where B occurred, then asking: what fraction of those also satisfy A?
+            </p>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                <strong>Drawing cards without replacement:</strong> Draw two cards. Given that the first is an Ace, what's the probability the second is also an Ace?
+                <pre><code>P(2nd Ace | 1st Ace) = (3 remaining aces) / (51 remaining cards)
+                      = 3/51 ≈ 5.88%</code></pre>
+                <p>Without knowing the first card was an Ace, it would be 4/52 ≈ 7.69%. The information changed the probability!</p>
+            </div>
+
+            <h2>Property 8: Multiplication Rule</h2>
+
+            <div class="property-box">
+                <h4>Joint Probability</h4>
+                <p>The probability of both A and B occurring:</p>
+                <div class="equation">
+                    P(A ∩ B) = P(A) × P(B|A)
+                </div>
+                <p>Or equivalently: P(A ∩ B) = P(B) × P(A|B)</p>
+            </div>
+
+            <h3>Special Case: Independent Events</h3>
+            <p>
+                When A and B are independent (one doesn't affect the other):
+            </p>
+            <div class="equation">
+                P(A ∩ B) = P(A) × P(B)    [when A and B are independent]
+            </div>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                <strong>Coin flips:</strong> Two independent coin flips. What's the probability of two heads?
+                <pre><code>P(heads on flip 1) = 1/2
+P(heads on flip 2 | heads on flip 1) = 1/2  (independent!)
+
+P(two heads) = 1/2 × 1/2 = 1/4 = 25%</code></pre>
+            </div>
+
+            <h2>Property 9: Law of Total Probability</h2>
+
+            <div class="property-box">
+                <h4>Total Probability</h4>
+                <p>If B₁, B₂, ..., Bₙ partition the sample space (mutually exclusive and exhaustive), then:</p>
+                <div class="equation">
+                    P(A) = Σ P(A|Bᵢ) × P(Bᵢ)
+                </div>
+            </div>
+
+            <h3>What It Means</h3>
+            <p>
+                To find P(A), we consider all ways A can happen through each Bᵢ, weight by P(Bᵢ), and sum.
+            </p>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                <strong>Disease testing:</strong> A disease affects 1% of the population. A test is 95% accurate. What's the probability a random person tests positive?
+                <pre><code>P(positive) = P(positive|disease) × P(disease) 
+            + P(positive|no disease) × P(no disease)
+           = 0.95 × 0.01 + 0.05 × 0.99
+           = 0.0095 + 0.0495
+           = 0.059 = 5.9%</code></pre>
+            </div>
+
+            <h2>Property 10: Bayes' Theorem</h2>
+
+            <div class="property-box">
+                <h4>Bayes' Theorem</h4>
+                <div class="equation">
+                    P(A|B) = P(B|A) × P(A) / P(B)
+                </div>
+            </div>
+
+            <h3>Why It Matters</h3>
+            <p>
+                Bayes' Theorem lets us reverse conditional probabilities. If we know P(B|A), we can find P(A|B). This is foundational for machine learning, medical diagnosis, and Bayesian inference.
+            </p>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                <strong>Medical diagnosis:</strong> If a person has the disease, there's a 95% chance they test positive. If they don't have it, there's a 5% chance of a false positive. Given that someone tests positive, what's the probability they actually have the disease?
+                <pre><code>P(disease|positive) = P(positive|disease) × P(disease) / P(positive)
+                     = 0.95 × 0.01 / 0.059
+                     ≈ 16.1%
+
+Only 16.1% chance! This is the base rate fallacy — even with a positive test, 
+it's unlikely the person has the disease when it's rare.</code></pre>
+            </div>
+
+            <h2>Property 11: Independence</h2>
+
+            <div class="property-box">
+                <h4>Independence Definition</h4>
+                <p>Events A and B are independent if:</p>
+                <div class="equation">
+                    P(A|B) = P(A)
+                </div>
+                <p>Equivalently: P(A ∩ B) = P(A) × P(B)</p>
+            </div>
+
+            <h3>What It Means</h3>
+            <p>
+                Knowing that B occurred doesn't change the probability of A. The events don't influence each other.
+            </p>
+
+            <h3>Example</h3>
+            <div class="example-box">
+                <strong>Die rolls:</strong> Two independent die rolls.
+                <pre><code>P(second roll is 3 | first roll is 3) = P(second roll is 3) = 1/6
+
+The first roll doesn't affect the second.</code></pre>
+            </div>
+
+            <h2>Quick Reference: Summary of Properties</h2>
+            <div class="highlight">
+                <strong>Key Properties:</strong>
+                <ul style="margin-top: 10px; margin-left: 10px;">
+                    <li><strong>Complement:</strong> P(A') = 1 - P(A)</li>
+                    <li><strong>Impossible:</strong> P(∅) = 0</li>
+                    <li><strong>Bounds:</strong> 0 ≤ P(A) ≤ 1</li>
+                    <li><strong>Monotonicity:</strong> A ⊆ B → P(A) ≤ P(B)</li>
+                    <li><strong>Addition:</strong> P(A ∪ B) = P(A) + P(B) - P(A ∩ B)</li>
+                    <li><strong>Conditional:</strong> P(A|B) = P(A ∩ B) / P(B)</li>
+                    <li><strong>Multiplication:</strong> P(A ∩ B) = P(A) × P(B|A)</li>
+                    <li><strong>Total Probability:</strong> P(A) = Σ P(A|Bᵢ) × P(Bᵢ)</li>
+                    <li><strong>Bayes:</strong> P(A|B) = P(B|A) × P(A) / P(B)</li>
+                    <li><strong>Independence:</strong> P(A ∩ B) = P(A) × P(B)</li>
+                </ul>
+            </div>
+
+            <h2>How These All Connect</h2>
+            <p>
+                These properties form a unified system derived from the three axioms:
+            </p>
+            <ul>
+                <li>Properties 1-4 establish the basic structure (bounds, complements, ordering)</li>
+                <li>Properties 5-6 tell us how to combine independent events</li>
+                <li>Properties 7-10 handle dependence and conditional information</li>
+                <li>Property 11 identifies when events are independent</li>
+            </ul>
+
+            <h2>Conclusion</h2>
+            <p>
+                The properties of probability aren't arbitrary rules — they're logical consequences of Kolmogorov's axioms. Understanding where they come from gives you confidence in using them and helps you remember why they work the way they do.
+            </p>
+            <p>
+                These properties are the tools you'll use constantly in statistics, machine learning, and data science. Master them, and you'll understand the foundation of probabilistic reasoning.
+            </p>
+
+            <div class="tip">
+                <strong>Pro tip:</strong> When solving a probability problem, identify which property applies, then use it systematically. Most problems reduce to these 11 properties and their combinations.
+            </div>
+
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255, 107, 53, 0.2); color: #b0b0b0;">
+                <p><strong>Questions about probability properties?</strong> Reach out on <a href="https://x.com/syscraft906" style="color: #ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color: #ff6b35;">GitHub</a>. Happy to discuss!</p>
+            </div>
+        </article>
+    </div>
+
+    <footer>
+        <p>Blog | syscraft906 | Building in public</p>
+        <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+    </footer>
+</body>
+</html>
