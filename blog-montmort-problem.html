@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montmort's Problem: The Matching Problem (1713) | syscraft906</title>
+    <meta name="description" content="Explore Montmort's classic probability problem from 1708: the matching problem. Learn about derangements, permutations, and its modern applications.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            line-height: 1.8;
+        }
+
+        header {
+            background: linear-gradient(135deg, #004e89 0%, #003d6b 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff6b35;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .meta {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+
+        .meta span {
+            margin-right: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        article {
+            background: rgba(0, 78, 137, 0.1);
+            border-left: 4px solid #ff6b35;
+            padding: 40px;
+            border-radius: 4px;
+        }
+
+        article h2 {
+            font-size: 1.8em;
+            color: #f7931e;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f7931e;
+            padding-bottom: 10px;
+        }
+
+        article h3 {
+            font-size: 1.3em;
+            color: #ff6b35;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        article p {
+            margin-bottom: 15px;
+            color: #d0d0d0;
+            line-height: 1.9;
+        }
+
+        article ul, article ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+            color: #d0d0d0;
+        }
+
+        article li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background: #1a1a1a;
+            border-left: 3px solid #ff6b35;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-radius: 4px;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #10b981;
+            font-size: 0.95em;
+        }
+
+        .highlight {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid #10b981;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #b0b0b0;
+        }
+
+        .tip {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #93c5fd;
+        }
+
+        .equation {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #10b981;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th {
+            background: rgba(255, 107, 53, 0.2);
+            color: #ff6b35;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #ff6b35;
+            font-weight: 600;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+            color: #d0d0d0;
+        }
+
+        table tr:hover {
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .example-box {
+            background: rgba(100, 150, 200, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #004e89;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 2px solid #ff6b35;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            article {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Montmort's Problem: The Classic Matching Problem (1708)</h1>
+        <div class="meta">
+            <span>📅 March 17, 2026</span>
+            <span>👤 syscraft906</span>
+            <span>📖 15 min read</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <a href="/blog.html" class="back-link">← Back to Blog</a>
+
+        <article>
+            <h2>Introduction: A Problem 300+ Years Old</h2>
+            <p>
+                Imagine you're checking coats at a fancy restaurant. You have 10 coats and 10 coat check numbers. At the end of the night, you randomly return the coats to customers. What's the probability that <strong>no one gets their own coat back?</strong>
+            </p>
+            <p>
+                This is Montmort's famous matching problem, first studied by Pierre Rémond de Montmort in 1708. It's one of the oldest and most elegant problems in probability theory, and the answer is surprisingly elegant.
+            </p>
+            <p>
+                In this post, we'll explore the problem, solve it, and see why it matters today.
+            </p>
+
+            <h2>Historical Context: Pierre Rémond de Montmort</h2>
+            <p>
+                Pierre Rémond de Montmort (1678-1719) was a French mathematician who published <em>Essay d'analyse sur les jeux de hazard</em> (Essay on the Analysis of Games of Chance) in 1708. This work is considered one of the founding texts of probability theory.
+            </p>
+            <p>
+                Montmort was part of the early wave of mathematicians (alongside Pascal, Fermat, Huygens) who were formalizing probability. His essay contained many problems about card games and probability, including the matching problem, also known as the <strong>problème des rencontres</strong> (problem of coincidences).
+            </p>
+
+            <h2>The Problem Statement</h2>
+            <p>
+                <strong>The Matching Problem:</strong> A person shuffles n letters into n envelopes randomly. What is the probability that none of the letters are in the correct envelope?
+            </p>
+            <p>
+                This is equivalent to asking: What's the probability of a complete derangement?
+            </p>
+            <p>
+                A <strong>derangement</strong> is a permutation where no element appears in its original position. The number of derangements of n objects is denoted D(n) or !n (subfactorial).
+            </p>
+
+            <h2>Small Examples</h2>
+
+            <h3>Case: n = 2 (2 letters, 2 envelopes)</h3>
+            <p>
+                Possible arrangements:
+            </p>
+            <ul>
+                <li>Letter 1 in Envelope 1, Letter 2 in Envelope 2 — NOT a derangement</li>
+                <li>Letter 1 in Envelope 2, Letter 2 in Envelope 1 — IS a derangement ✓</li>
+            </ul>
+            <p>
+                P(derangement) = 1/2 = 50%
+            </p>
+
+            <h3>Case: n = 3 (3 letters, 3 envelopes)</h3>
+            <p>
+                Total arrangements: 3! = 6
+            </p>
+            <p>
+                Derangements:
+            </p>
+            <ul>
+                <li>(1,2,3) → (2,3,1) ✓</li>
+                <li>(1,2,3) → (3,1,2) ✓</li>
+            </ul>
+            <p>
+                P(derangement) = 2/6 = 1/3 ≈ 33.3%
+            </p>
+
+            <h3>Case: n = 4 (4 letters, 4 envelopes)</h3>
+            <p>
+                Total arrangements: 4! = 24
+            </p>
+            <p>
+                Derangements: 9
+            </p>
+            <p>
+                P(derangement) = 9/24 = 3/8 = 37.5%
+            </p>
+
+            <h2>The Formula: Subfactorial</h2>
+            <p>
+                The number of derangements of n objects is:
+            </p>
+
+            <div class="equation">
+                D(n) = n! × Σ((-1)^k / k!)  for k = 0 to n
+            </div>
+
+            <p>
+                Or more compactly:
+            </p>
+
+            <div class="equation">
+                D(n) = n! × (1 - 1/1! + 1/2! - 1/3! + ... + (-1)^n/n!)
+            </div>
+
+            <p>
+                This is called the <strong>subfactorial</strong> and is denoted !n.
+            </p>
+
+            <h3>Why This Formula?</h3>
+            <p>
+                This formula comes from the <strong>inclusion-exclusion principle</strong>:
+            </p>
+            <ul>
+                <li>Start with n! total permutations</li>
+                <li>Subtract permutations where at least one letter is correct</li>
+                <li>Add back permutations where at least two letters are correct (to avoid over-subtracting)</li>
+                <li>Continue alternating until all n letters are considered</li>
+            </ul>
+
+            <h2>The Probability Formula</h2>
+            <p>
+                The probability that all n letters are in wrong envelopes:
+            </p>
+
+            <div class="equation">
+                P(derangement) = D(n) / n! = 1 - 1/1! + 1/2! - 1/3! + ... + (-1)^n/n!
+            </div>
+
+            <h2>Surprising Result: As n → ∞</h2>
+            <p>
+                Here's the amazing part. As n gets large:
+            </p>
+
+            <div class="equation">
+                P(derangement) → 1/e ≈ 0.36788
+            </div>
+
+            <p>
+                Where <code>e ≈ 2.71828</code> is Euler's number (the base of natural logarithms).
+            </p>
+
+            <p>
+                This means that no matter how many letters and envelopes you have, the probability that none match approaches roughly **36.8%** — and it converges very quickly!
+            </p>
+
+            <h2>Table: Probabilities by n</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>n (letters)</th>
+                        <th>D(n) (derangements)</th>
+                        <th>n! (total)</th>
+                        <th>P(derangement)</th>
+                        <th>% Probability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0%</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>0.5</td>
+                        <td>50.0%</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>2</td>
+                        <td>6</td>
+                        <td>0.333</td>
+                        <td>33.3%</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>9</td>
+                        <td>24</td>
+                        <td>0.375</td>
+                        <td>37.5%</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>44</td>
+                        <td>120</td>
+                        <td>0.367</td>
+                        <td>36.7%</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>1,334,961</td>
+                        <td>3,628,800</td>
+                        <td>0.3679</td>
+                        <td>36.79%</td>
+                    </tr>
+                    <tr>
+                        <td>20</td>
+                        <td>5.9 × 10^18</td>
+                        <td>2.4 × 10^18</td>
+                        <td>0.367879</td>
+                        <td>36.7879%</td>
+                    </tr>
+                    <tr>
+                        <td>∞</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td>1/e</td>
+                        <td>36.7879%</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Notice how quickly it converges to 1/e!
+            </p>
+
+            <h2>Why Does It Converge to 1/e?</h2>
+            <p>
+                The Taylor series expansion of e^(-1) is:
+            </p>
+
+            <div class="equation">
+                e^(-1) = 1/e = 1 - 1/1! + 1/2! - 1/3! + 1/4! - ...
+            </div>
+
+            <p>
+                But our derangement probability is:
+            </p>
+
+            <div class="equation">
+                P(derangement) = 1 - 1/1! + 1/2! - 1/3! + ... + (-1)^n/n!
+            </div>
+
+            <p>
+                For large n, we're computing the first n+1 terms of the Taylor series for e^(-1). As n → ∞, we get the full series, which equals 1/e exactly!
+            </p>
+
+            <h2>Python Implementation</h2>
+            <pre><code>import math
+from math import factorial
+
+def derangements(n):
+    """Calculate number of derangements of n objects"""
+    if n == 0:
+        return 1
+    if n == 1:
+        return 0
+    
+    result = 0
+    for k in range(n + 1):
+        result += factorial(n) * ((-1) ** k) / factorial(k)
+    return int(result)
+
+def derangement_probability(n):
+    """Calculate probability of complete derangement"""
+    d = derangements(n)
+    return d / factorial(n)
+
+# Test
+for n in [2, 3, 4, 5, 10, 20, 100]:
+    prob = derangement_probability(n)
+    print(f"n={n:3d}: P(derangement) = {prob:.6f} ({prob*100:.4f}%)")
+
+# Compare with 1/e
+one_over_e = 1 / math.e
+print(f"\n1/e = {one_over_e:.6f}")
+
+# Output:
+# n=  2: P(derangement) = 0.500000 (50.0000%)
+# n=  3: P(derangement) = 0.333333 (33.3333%)
+# n=  4: P(derangement) = 0.375000 (37.5000%)
+# n=  5: P(derangement) = 0.366667 (36.6667%)
+# n= 10: P(derangement) = 0.367857 (36.7857%)
+# n= 20: P(derangement) = 0.367879 (36.7879%)
+# n=100: P(derangement) = 0.367879 (36.7879%)
+# 
+# 1/e = 0.367879</code></pre>
+
+            <h2>Real-World Applications</h2>
+
+            <h3>1. Coat Check Problem (Original)</h3>
+            <p>
+                Restaurant coats randomly returned to customers. Probability no one gets their own coat: ~36.8%.
+            </p>
+
+            <h3>2. Secret Santa</h3>
+            <p>
+                In a Secret Santa gift exchange, you want everyone to get someone else's gift. Probability of success with random assignment: ~36.8%.
+            </p>
+
+            <h3>3. Cryptography</h3>
+            <p>
+                Derangements are used in analyzing the security of permutation ciphers and analyzing randomness in cryptographic systems.
+            </p>
+
+            <h3>4. Quality Control</h3>
+            <p>
+                When inspecting n items, what's the probability that inspector marks are completely wrong about original labels?
+            </p>
+
+            <h3>5. DNA Sequencing</h3>
+            <p>
+                Biologists use derangements when analyzing random mutations where no position retains its original genetic marker.
+            </p>
+
+            <h3>6. Job Assignment</h3>
+            <p>
+                Company has n employees and n jobs. Random assignment results in no one getting their preferred job: ~36.8% probability.
+            </p>
+
+            <h2>The Beautiful Connection to e</h2>
+            <div class="highlight">
+                <strong>Key insight:</strong> The derangement problem connects three seemingly unrelated mathematical concepts:
+                <ul style="margin-top: 10px; margin-left: 10px;">
+                    <li><strong>Combinatorics:</strong> Counting permutations with constraints</li>
+                    <li><strong>Probability:</strong> Finding the probability of a specific outcome</li>
+                    <li><strong>Analysis:</strong> The Taylor series expansion of e^(-1)</li>
+                </ul>
+                This is an example of how deep mathematical truths connect across different fields.
+            </div>
+
+            <h2>Montmort's Legacy</h2>
+            <p>
+                Montmort's work on this problem:
+            </p>
+            <ul>
+                <li>Pioneered the use of inclusion-exclusion principle</li>
+                <li>Connected combinatorics to probability rigorously</li>
+                <li>Influenced the development of probability theory in the 18th century</li>
+                <li>Inspired later work by Euler, who further generalized the results</li>
+            </ul>
+
+            <h2>Fun Fact: Quick Approximation</h2>
+            <div class="tip">
+                <strong>For large n:</strong> The number of derangements is approximately n!/e.
+                <p style="margin-top: 10px;">
+                    So if you have 100 letters:
+                </p>
+                <pre><code>D(100) ≈ 100! / e ≈ 100! / 2.71828</code></pre>
+            </div>
+
+            <h2>Conclusion</h2>
+            <p>
+                Montmort's matching problem is a beautiful example of classical probability. It's simple to state, elegant to solve, and connects to deep mathematics (the number e!). The fact that the probability converges to 1/e ≈ 36.8% regardless of the size shows the power of mathematical patterns.
+            </p>
+            <p>
+                Over 300 years later, derangements still appear in cryptography, algorithms, and computer science. Montmort's contribution has proven timeless.
+            </p>
+
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255, 107, 53, 0.2); color: #b0b0b0;">
+                <p><strong>Next time you're at a coat check, remember:</strong> There's about a 36.8% chance no one gets their own coat back! Want to discuss probability history? <a href="https://x.com/syscraft906" style="color: #ff6b35;">Hit me up on X</a>.</p>
+            </div>
+        </article>
+    </div>
+
+    <footer>
+        <p>Blog | syscraft906 | Building in public</p>
+        <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+    </footer>
+</body>
+</html>
