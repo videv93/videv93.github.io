@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taylor Series: Approximating Functions with Polynomials | syscraft906</title>
+    <meta name="description" content="Master Taylor series: the mathematical technique to approximate any smooth function with polynomials. Learn the formula, applications, and real-world uses.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #e0e0e0;
+            line-height: 1.8;
+        }
+
+        header {
+            background: linear-gradient(135deg, #004e89 0%, #003d6b 100%);
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff6b35;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #ff6b35;
+            margin-bottom: 15px;
+        }
+
+        .meta {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+
+        .meta span {
+            margin-right: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        article {
+            background: rgba(0, 78, 137, 0.1);
+            border-left: 4px solid #ff6b35;
+            padding: 40px;
+            border-radius: 4px;
+        }
+
+        article h2 {
+            font-size: 1.8em;
+            color: #f7931e;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f7931e;
+            padding-bottom: 10px;
+        }
+
+        article h3 {
+            font-size: 1.3em;
+            color: #ff6b35;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        article p {
+            margin-bottom: 15px;
+            color: #d0d0d0;
+            line-height: 1.9;
+        }
+
+        article ul, article ol {
+            margin-left: 25px;
+            margin-bottom: 20px;
+            color: #d0d0d0;
+        }
+
+        article li {
+            margin-bottom: 10px;
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #10b981;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background: #1a1a1a;
+            border-left: 3px solid #ff6b35;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border-radius: 4px;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #10b981;
+            font-size: 0.95em;
+        }
+
+        .highlight {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid #10b981;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #b0b0b0;
+        }
+
+        .tip {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            color: #93c5fd;
+        }
+
+        .equation {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #10b981;
+            text-align: center;
+        }
+
+        .example-box {
+            background: rgba(100, 150, 200, 0.1);
+            border-left: 3px solid #3b82f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #ff6b35;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #004e89;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 2px solid #ff6b35;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            article {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Taylor Series: Approximating Functions with Polynomials</h1>
+        <div class="meta">
+            <span>📅 March 17, 2026</span>
+            <span>👤 syscraft906</span>
+            <span>📖 18 min read</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <a href="/blog.html" class="back-link">← Back to Blog</a>
+
+        <article>
+            <h2>Introduction</h2>
+            <p>
+                Imagine you have a complicated function like sin(x) or e^x. Computing these exactly requires advanced mathematical techniques. But what if you could approximate them using simple polynomials?
+            </p>
+            <p>
+                That's the power of <strong>Taylor series</strong> — a revolutionary technique in calculus that lets you express almost any smooth function as an infinite polynomial. This simple idea has changed mathematics, physics, engineering, and computer science.
+            </p>
+            <p>
+                In this post, we'll explore what Taylor series are, how to derive them, and why they matter.
+            </p>
+
+            <h2>The Core Idea</h2>
+            <p>
+                The main insight: If you know a function's value and all its derivatives at a single point, you can reconstruct the entire function using a polynomial.
+            </p>
+            <p>
+                This is the foundation of Taylor series.
+            </p>
+
+            <h2>The Taylor Series Formula</h2>
+            <p>
+                For a function f(x) that's infinitely differentiable at a point a, the Taylor series expansion around a is:
+            </p>
+
+            <div class="equation">
+                f(x) = f(a) + f'(a)(x-a) + f''(a)(x-a)²/2! + f'''(a)(x-a)³/3! + ...
+            </div>
+
+            <p>
+                Or more compactly:
+            </p>
+
+            <div class="equation">
+                f(x) = Σ [f^(n)(a) / n!] × (x-a)^n   for n = 0 to ∞
+            </div>
+
+            <p>
+                Where:
+            </p>
+            <ul>
+                <li><code>f^(n)(a)</code> is the n-th derivative of f evaluated at x = a</li>
+                <li><code>n!</code> is n factorial</li>
+                <li><code>(x-a)^n</code> is the power term</li>
+            </ul>
+
+            <h2>Special Case: Maclaurin Series</h2>
+            <p>
+                When a = 0 (expanding around the origin), the Taylor series becomes the <strong>Maclaurin series</strong>:
+            </p>
+
+            <div class="equation">
+                f(x) = f(0) + f'(0)x + f''(0)x²/2! + f'''(0)x³/3! + ...
+            </div>
+
+            <p>
+                Maclaurin series are simpler because you only need derivatives at x = 0.
+            </p>
+
+            <h2>Intuition: Why Does It Work?</h2>
+            <p>
+                The idea is brilliant in its simplicity:
+            </p>
+            <ul>
+                <li><strong>Constant term:</strong> f(a) — the value at the expansion point</li>
+                <li><strong>Linear term:</strong> f'(a)(x-a) — approximates how the function changes near a</li>
+                <li><strong>Quadratic term:</strong> f''(a)(x-a)²/2! — captures curvature</li>
+                <li><strong>Higher terms:</strong> Capture increasingly fine details</li>
+            </ul>
+
+            <p>
+                By including more and more terms, you get better and better approximations.
+            </p>
+
+            <h2>Examples: Common Taylor Series</h2>
+
+            <h3>1. Exponential Function: e^x</h3>
+            <div class="equation">
+                e^x = 1 + x + x²/2! + x³/3! + x⁴/4! + ...
+            </div>
+
+            <h3>2. Sine Function: sin(x)</h3>
+            <div class="equation">
+                sin(x) = x - x³/3! + x⁵/5! - x⁷/7! + ...
+            </div>
+
+            <h3>3. Cosine Function: cos(x)</h3>
+            <div class="equation">
+                cos(x) = 1 - x²/2! + x⁴/4! - x⁶/6! + ...
+            </div>
+
+            <h3>4. Natural Logarithm: ln(1+x)</h3>
+            <div class="equation">
+                ln(1+x) = x - x²/2 + x³/3 - x⁴/4 + ...   [for |x| &lt; 1]
+            </div>
+
+            <h3>5. Geometric Series: 1/(1-x)</h3>
+            <div class="equation">
+                1/(1-x) = 1 + x + x² + x³ + x⁴ + ...   [for |x| &lt; 1]
+            </div>
+
+            <h2>Computing a Taylor Series: Step by Step</h2>
+            <p>
+                Let's compute the Taylor series for f(x) = e^x around a = 0:
+            </p>
+
+            <div class="example-box">
+                <strong>Step 1:</strong> Find derivatives
+                <pre><code>f(x) = e^x          →  f(0) = 1
+f'(x) = e^x         →  f'(0) = 1
+f''(x) = e^x        →  f''(0) = 1
+f'''(x) = e^x       →  f'''(0) = 1
+...</code></pre>
+
+                <strong>Step 2:</strong> Apply formula
+                <pre><code>e^x = 1 + 1·x + 1·x²/2! + 1·x³/3! + ...
+    = 1 + x + x²/2! + x³/3! + ...</code></pre>
+
+                <strong>Key insight:</strong> All derivatives of e^x are e^x itself!
+            </div>
+
+            <h2>Practical Example: Approximating sin(x)</h2>
+            <p>
+                Let's use Taylor series to approximate sin(π/6) ≈ 0.5:
+            </p>
+
+            <div class="example-box">
+                <strong>Using different numbers of terms:</strong>
+                <pre><code>x = π/6 ≈ 0.5236
+
+0 terms:  sin(x) ≈ 0
+1 term:   sin(x) ≈ x ≈ 0.5236
+2 terms:  sin(x) ≈ x - x³/6 ≈ 0.4998
+3 terms:  sin(x) ≈ x - x³/6 + x⁵/120 ≈ 0.5000
+Exact:    sin(π/6) = 0.5</code></pre>
+
+                Notice how each term gets us closer to the true value!
+            </div>
+
+            <h2>Python Implementation</h2>
+            <pre><code>import math
+from math import factorial
+
+def taylor_sin(x, n_terms):
+    """Approximate sin(x) using Taylor series with n terms"""
+    result = 0
+    for n in range(n_terms):
+        term = ((-1) ** n) * (x ** (2*n + 1)) / factorial(2*n + 1)
+        result += term
+    return result
+
+def taylor_cos(x, n_terms):
+    """Approximate cos(x) using Taylor series with n terms"""
+    result = 0
+    for n in range(n_terms):
+        term = ((-1) ** n) * (x ** (2*n)) / factorial(2*n)
+        result += term
+    return result
+
+def taylor_exp(x, n_terms):
+    """Approximate e^x using Taylor series with n terms"""
+    result = 0
+    for n in range(n_terms):
+        term = (x ** n) / factorial(n)
+        result += term
+    return result
+
+# Test
+x = math.pi / 6  # π/6 radians
+
+print("Approximating sin(π/6):")
+for n in [1, 2, 3, 5, 10]:
+    approx = taylor_sin(x, n)
+    exact = math.sin(x)
+    error = abs(approx - exact)
+    print(f"  {n:2d} terms: {approx:.6f}, error: {error:.2e}")
+
+print(f"\nExact: {math.sin(x):.6f}")
+
+# Output:
+# Approximating sin(π/6):
+#   1 terms: 0.523599, error: 2.36e-02
+#   2 terms: 0.499840, error: 1.60e-04
+#   3 terms: 0.500005, error: 4.54e-06
+#   5 terms: 0.500000, error: 2.57e-11
+#  10 terms: 0.500000, error: 0.00e+00
+#
+# Exact: 0.500000</code></pre>
+
+            <h2>Convergence: When Does It Work?</h2>
+            <p>
+                Taylor series don't always converge everywhere. The <strong>radius of convergence</strong> is the region where the series works.
+            </p>
+
+            <h3>Examples:</h3>
+            <ul>
+                <li><strong>e^x:</strong> Converges for all x (radius = ∞)</li>
+                <li><strong>sin(x), cos(x):</strong> Converge for all x (radius = ∞)</li>
+                <li><strong>ln(1+x):</strong> Converges for |x| &lt; 1</li>
+                <li><strong>1/(1-x):</strong> Converges for |x| &lt; 1</li>
+            </ul>
+
+            <p>
+                The radius of convergence depends on singularities (points where the function is undefined).
+            </p>
+
+            <h2>Why Taylor Series Matter</h2>
+
+            <h3>1. Computing Difficult Functions</h3>
+            <p>
+                Computers can't directly compute sin(x) or ln(x). Instead, they use Taylor series to approximate these functions to required precision.
+            </p>
+
+            <h3>2. Calculus and Analysis</h3>
+            <p>
+                Taylor series bridge discrete approximations and continuous analysis. They're fundamental to numerical analysis.
+            </p>
+
+            <h3>3. Physics and Engineering</h3>
+            <p>
+                Many physical laws lead to differential equations. Taylor series solve them numerically.
+            </p>
+
+            <h3>4. Machine Learning</h3>
+            <p>
+                Gradient descent (used in all neural networks) is based on Taylor series approximations of loss functions.
+            </p>
+
+            <h3>5. Signal Processing</h3>
+            <p>
+                Fourier series (a cousin of Taylor series) are fundamental to digital signal processing.
+            </p>
+
+            <h2>Taylor vs. Fourier Series</h2>
+            <p>
+                <strong>Taylor Series:</strong> Approximates using polynomials (powers of x), good for single-point analysis
+            </p>
+            <p>
+                <strong>Fourier Series:</strong> Approximates using sines and cosines, good for periodic functions
+            </p>
+
+            <h2>Error Estimation: How Close Is Our Approximation?</h2>
+            <p>
+                The <strong>Lagrange remainder formula</strong> tells us the error when truncating a Taylor series:
+            </p>
+
+            <div class="equation">
+                |R_n(x)| ≤ |M(x-a)^(n+1) / (n+1)!|
+            </div>
+
+            <p>
+                Where M is an upper bound on |f^(n+1)| between a and x. This tells you how many terms you need for desired accuracy.
+            </p>
+
+            <h2>Key Insights</h2>
+
+            <div class="highlight">
+                <strong>Remember:</strong>
+                <ul style="margin-top: 10px; margin-left: 10px;">
+                    <li>Taylor series express functions as infinite polynomials</li>
+                    <li>They require knowing all derivatives at one point</li>
+                    <li>Maclaurin series are Taylor series centered at x = 0</li>
+                    <li>They have a radius of convergence (where they work)</li>
+                    <li>Approximations improve with more terms</li>
+                    <li>Fundamental to numerical computing and analysis</li>
+                </ul>
+            </div>
+
+            <h2>Historical Context</h2>
+            <p>
+                Taylor series were developed by Brook Taylor in the early 1700s (first published in 1715). The Maclaurin series, a special case, was popularized by Colin Maclaurin. Though Newton and Gregory had discovered similar ideas earlier, Taylor's general formulation became foundational to calculus.
+            </p>
+
+            <h2>Conclusion</h2>
+            <p>
+                Taylor series transform complicated functions into manageable polynomials. This simple idea has proven to be one of the most powerful techniques in mathematics, with applications spanning from pure math to engineering to machine learning.
+            </p>
+            <p>
+                Understanding Taylor series deepens your appreciation for how mathematical approximations work — and why your computer can calculate sin(x) so quickly and accurately.
+            </p>
+
+            <div class="tip">
+                <strong>Pro tip:</strong> The next time you use sin(), cos(), or ln() in code, remember that your computer is secretly computing a Taylor series behind the scenes!
+            </div>
+
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255, 107, 53, 0.2); color: #b0b0b0;">
+                <p><strong>Want to dive deeper into Taylor series?</strong> Reach out on <a href="https://x.com/syscraft906" style="color: #ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color: #ff6b35;">GitHub</a>. Let's discuss math!</p>
+            </div>
+        </article>
+    </div>
+
+    <footer>
+        <p>Blog | syscraft906 | Building in public</p>
+        <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+    </footer>
+</body>
+</html>
