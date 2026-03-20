@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #7: Vanilla JS Charts & Dynamic UI | syscraft906</title>
+    <meta name="description" content="Build dynamic charts and UI with pure vanilla JavaScript and HTML5 Canvas. No Chart.js, no React — just the Web APIs.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #7: Vanilla JS Charts &amp; Dynamic UI</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 10 min read</span>
+        <span>🏷 Vanilla JS, Canvas, Fetch API, DOM</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">→ #7: Vanilla JS Charts &amp; Dynamic UI (you are here)</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>Fetch Data from the Node.js API</h2>
+        <p>The browser's built-in <code>fetch()</code> API lets us call our Node.js server without any libraries. Let's load our todos and render them dynamically:</p>
+        <pre><code>// static/dashboard.js
+
+async function loadStats() {
+  const res = await fetch('/api/todos');
+  const { todos } = await res.json();
+
+  const total = todos.length;
+  const done = todos.filter(t =&gt; t.done).length;
+  const pending = total - done;
+
+  // Update stat cards
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-done').textContent = done;
+  document.getElementById('stat-pending').textContent = pending;
+
+  // Draw the bar chart
+  drawBarChart(document.getElementById('chart'), [
+    { label: 'Total', value: total, color: '#ff6b35' },
+    { label: 'Done', value: done, color: '#10b981' },
+    { label: 'Pending', value: pending, color: '#f7931e' }
+  ]);
+}
+
+// Run on page load
+loadStats();</code></pre>
+
+        <h2>Drawing a Bar Chart on HTML5 Canvas</h2>
+        <p>The <code>&lt;canvas&gt;</code> element gives us a 2D drawing API. No Chart.js needed:</p>
+        <pre><code>function drawBarChart(canvas, data) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+  const padding = 40;
+  const barWidth = (W - padding * 2) / data.length - 10;
+  const maxValue = Math.max(...data.map(d =&gt; d.value), 1);
+
+  // Clear canvas
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Draw each bar
+  data.forEach((item, i) => {
+    const barH = ((item.value / maxValue) * (H - padding * 2));
+    const x = padding + i * (barWidth + 10);
+    const y = H - padding - barH;
+
+    // Bar
+    ctx.fillStyle = item.color;
+    ctx.fillRect(x, y, barWidth, barH);
+
+    // Value label on top
+    ctx.fillStyle = '#e0e0e0';
+    ctx.font = '14px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText(item.value, x + barWidth / 2, y - 8);
+
+    // Category label at bottom
+    ctx.fillStyle = '#b0b0b0';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText(item.label, x + barWidth / 2, H - 10);
+  });
+
+  // Y-axis line
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.beginPath();
+  ctx.moveTo(padding, padding);
+  ctx.lineTo(padding, H - padding);
+  ctx.stroke();
+}</code></pre>
+
+        <h2>Rendering a Dynamic Todo List</h2>
+        <pre><code>function renderTodos(todos) {
+  const list = document.getElementById('todo-list');
+  list.innerHTML = '';
+
+  if (todos.length === 0) {
+    list.innerHTML = '&lt;li class="empty"&gt;No todos yet!&lt;/li&gt;';
+    return;
+  }
+
+  todos.forEach(todo =&gt; {
+    const li = document.createElement('li');
+    li.className = `todo-item${todo.done ? ' done' : ''}`;
+
+    const span = document.createElement('span');
+    span.textContent = todo.title; // textContent is safe — no XSS risk
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.textContent = todo.done ? 'Undo' : '✓';
+    toggleBtn.addEventListener('click', () =&gt; toggleTodo(todo.id));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✕';
+    deleteBtn.className = 'danger';
+    deleteBtn.addEventListener('click', () =&gt; deleteTodo(todo.id));
+
+    li.append(span, toggleBtn, deleteBtn);
+    list.appendChild(li);
+  });
+}
+
+async function toggleTodo(id) {
+  await fetch(`/todos/${id}/toggle`, { method: 'POST' });
+  loadStats(); // refresh
+}
+
+async function deleteTodo(id) {
+  await fetch(`/todos/${id}/delete`, { method: 'POST' });
+  loadStats(); // refresh
+}</code></pre>
+
+        <div class="tip">
+            <strong>textContent vs innerHTML:</strong> Always use <code>textContent</code> to set user data in the DOM — it treats the value as plain text, not HTML. Using <code>innerHTML</code> with user data creates XSS vulnerabilities.
+        </div>
+
+        <h2>Adding a Todo Without Page Reload</h2>
+        <pre><code>document.getElementById('add-form')
+  .addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const input = document.getElementById('todo-input');
+    const title = input.value.trim();
+    if (!title) return;
+
+    const res = await fetch('/todos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title })
+    });
+
+    if (res.ok) {
+      input.value = '';
+      loadStats(); // refresh the list + chart
+    } else {
+      const err = await res.json();
+      alert(err.error);
+    }
+  });</code></pre>
+
+        <h2>CSS Animations Without Libraries</h2>
+        <pre><code>/* static/style.css */
+
+/* Fade in new items */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.todo-item {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35, #10b981);
+  transition: width 0.5s ease;
+}</code></pre>
+
+        <pre><code>// Update progress bar
+function updateProgress(done, total) {
+  const pct = total ? (done / total) * 100 : 0;
+  document.querySelector('.progress-fill').style.width = pct + '%';
+}</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Built-in <code>fetch()</code> — no axios, no xhr wrappers needed</li>
+                <li>HTML5 Canvas 2D API — full chart drawing, no Chart.js required</li>
+                <li>Use <code>textContent</code> not <code>innerHTML</code> for user data</li>
+                <li>DOM manipulation is powerful without React or Vue</li>
+                <li>CSS <code>@keyframes</code> + <code>transition</code> — animations without JavaScript libraries</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>Module 2 is complete! In <a href="/blog-nodejs-08-websockets.html" style="color:#ff6b35;">Post #8</a>, we start Module 3 — the real-time Chat app. We'll implement WebSockets from scratch using Node's <code>net</code> module and raw TCP connections.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

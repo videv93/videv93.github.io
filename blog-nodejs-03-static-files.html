@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #3: Serving Static Files (HTML, CSS, JS) | syscraft906</title>
+    <meta name="description" content="Serve static files with Node.js built-ins: fs.readFile, MIME types, path.join for security, and caching headers.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #3: Serving Static Files (HTML, CSS, JS)</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 8 min read</span>
+        <span>🏷 Node.js, fs, Static Files, Security</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">→ #3: Serving Static Files (HTML, CSS, JS) (you are here)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>Static Files in Node.js — No serve-static Needed</h2>
+        <p>When Express serves your <code>public/</code> folder, it uses a package called <code>serve-static</code> under the hood. That package reads files from disk and sends them with the right headers. We can do exactly the same thing with Node's built-in <code>fs</code> and <code>path</code> modules — and learn a lot about security in the process.</p>
+
+        <div class="highlight">
+            <strong>What we're building:</strong> A <code>static.js</code> middleware that reads files from a <code>public/</code> directory, serves them with correct MIME types, adds caching headers using ETag and Cache-Control, and prevents directory traversal attacks.
+        </div>
+
+        <h2>Reading a File with fs.readFile</h2>
+        <p>The most basic version — just read a file and send it:</p>
+        <pre><code>const http = require('http');
+const fs   = require('fs');
+const path = require('path');
+
+http.createServer((req, res) => {
+  // Serve index.html for every request (for now)
+  const filePath = path.join(__dirname, 'public', 'index.html');
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      res.writeHead(404);
+      res.end('Not found');
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(data);
+  });
+}).listen(3000);
+</code></pre>
+        <p>This works, but it uses the callback style. Let's use <code>fs.promises</code> for cleaner async/await code throughout:</p>
+        <pre><code>const fs = require('fs').promises; // or: require('fs/promises') in Node 14+
+
+async function serveFile(res, filePath, contentType) {
+  try {
+    const data = await fs.readFile(filePath);
+    res.writeHead(200, { 'Content-Type': contentType });
+    res.end(data);
+  } catch (err) {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('404 — File not found');
+  }
+}
+</code></pre>
+
+        <h2>MIME Types — Telling the Browser What You're Sending</h2>
+        <p>Without the right <code>Content-Type</code> header, browsers won't know how to handle your files. CSS won't be applied, JavaScript won't execute. We need a MIME type map:</p>
+        <pre><code>// mime.js
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.css':  'text/css; charset=utf-8',
+  '.js':   'application/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png':  'image/png',
+  '.jpg':  'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif':  'image/gif',
+  '.svg':  'image/svg+xml',
+  '.ico':  'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2':'font/woff2',
+  '.txt':  'text/plain; charset=utf-8',
+  '.pdf':  'application/pdf',
+};
+
+function getMimeType(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  return MIME_TYPES[ext] || 'application/octet-stream';
+}
+
+module.exports = { getMimeType };
+</code></pre>
+        <div class="tip">
+            <strong>application/octet-stream</strong> is the default for unknown file types — browsers will download the file rather than display it. That's the safest fallback behavior.
+        </div>
+
+        <h2>Directory Traversal Attacks — The Critical Security Issue</h2>
+        <p>This is the most important part of serving static files. A malicious user might request:</p>
+        <pre><code>GET /../../etc/passwd HTTP/1.1
+GET /../server.js HTTP/1.1
+GET /%2e%2e%2fetc%2fpasswd HTTP/1.1  (URL-encoded)
+</code></pre>
+        <p>If you naively join <code>public/ + req.url</code>, you'll serve files outside your intended directory. The fix is to <strong>resolve</strong> the path and verify it still starts with your public directory:</p>
+        <pre><code>const path = require('path');
+
+const PUBLIC_DIR = path.resolve(__dirname, 'public');
+
+function getSafePath(requestUrl) {
+  // Decode URL encoding (%2e%2e → ..)
+  const decoded = decodeURIComponent(requestUrl);
+
+  // Remove query string
+  const pathname = decoded.split('?')[0];
+
+  // Join with public dir and resolve (normalizes .. and .)
+  const resolved = path.resolve(PUBLIC_DIR, '.' + pathname);
+
+  // CRITICAL: verify the resolved path is inside PUBLIC_DIR
+  if (!resolved.startsWith(PUBLIC_DIR + path.sep) &amp;&amp; resolved !== PUBLIC_DIR) {
+    return null; // Traversal attempt detected
+  }
+
+  return resolved;
+}
+</code></pre>
+        <div class="warning">
+            <strong>Never skip this check.</strong> Directory traversal is a real vulnerability. Always resolve the path and verify it stays within your public directory. The <code>path.resolve()</code> call handles all the <code>..</code> normalization.
+        </div>
+
+        <h2>Building the Full Static File Server</h2>
+        <p>Now let's put it all together into a reusable <code>static.js</code> module:</p>
+        <pre><code>// static.js
+'use strict';
+
+const fs   = require('fs').promises;
+const path = require('path');
+
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.css':  'text/css; charset=utf-8',
+  '.js':   'application/javascript; charset=utf-8',
+  '.json': 'application/json',
+  '.png':  'image/png',
+  '.jpg':  'image/jpeg',
+  '.svg':  'image/svg+xml',
+  '.ico':  'image/x-icon',
+  '.txt':  'text/plain',
+};
+
+function createStaticHandler(publicDir) {
+  const root = path.resolve(publicDir);
+
+  return async function staticHandler(req, res) {
+    // Only serve GET requests
+    if (req.method !== 'GET' &amp;&amp; req.method !== 'HEAD') return false;
+
+    // Decode and clean the URL path
+    let pathname;
+    try {
+      pathname = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+    } catch {
+      return false;
+    }
+
+    // Default to index.html for directory requests
+    if (pathname.endsWith('/')) pathname += 'index.html';
+
+    // Security: resolve and verify the path
+    const filePath = path.resolve(root, '.' + pathname);
+    if (!filePath.startsWith(root + path.sep) &amp;&amp; filePath !== root) {
+      res.writeHead(403, { 'Content-Type': 'text/plain' });
+      res.end('403 Forbidden');
+      return true;
+    }
+
+    // Read the file
+    let data, stat;
+    try {
+      [data, stat] = await Promise.all([
+        fs.readFile(filePath),
+        fs.stat(filePath),
+      ]);
+    } catch {
+      return false; // File not found — let other routes handle it
+    }
+
+    // Build ETag from file size + modification time
+    const etag = `"${stat.size}-${stat.mtime.getTime()}"`;
+
+    // Cache validation — 304 Not Modified
+    if (req.headers['if-none-match'] === etag) {
+      res.writeHead(304);
+      res.end();
+      return true;
+    }
+
+    const ext         = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
+    res.writeHead(200, {
+      'Content-Type':   contentType,
+      'Content-Length': stat.size,
+      'ETag':           etag,
+      'Cache-Control':  'public, max-age=3600', // 1 hour
+      'Last-Modified':  stat.mtime.toUTCString(),
+    });
+
+    // HEAD requests: headers only, no body
+    if (req.method === 'HEAD') {
+      res.end();
+    } else {
+      res.end(data);
+    }
+    return true; // Handled
+  };
+}
+
+module.exports = { createStaticHandler };
+</code></pre>
+
+        <h2>Integrating with Our Router</h2>
+        <pre><code>// server.js
+const http   = require('http');
+const Router = require('./router');
+const { createStaticHandler } = require('./static');
+
+const router = new Router();
+const serveStatic = createStaticHandler('./public');
+
+// API routes
+router.get('/api/todos', (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ todos: [] }));
+});
+
+const server = http.createServer(async (req, res) => {
+  // Try static files first
+  const handled = await serveStatic(req, res);
+  if (handled) return;
+
+  // Fall through to API router
+  router.handle(req, res);
+});
+
+server.listen(3000, () => console.log('http://localhost:3000'));
+</code></pre>
+
+        <h2>Understanding ETag and Caching</h2>
+        <p>The <code>ETag</code> header is a fingerprint of a file's content. The browser caches it and sends <code>If-None-Match: "etag-value"</code> on the next request. If the ETag still matches, we return <code>304 Not Modified</code> with no body — saving bandwidth.</p>
+        <pre><code>// First request:
+// Server → ETag: "1024-1710000000000"
+// Browser caches the file and the ETag
+
+// Second request (browser):
+// Browser → If-None-Match: "1024-1710000000000"
+// Server: ETag matches → 304 Not Modified (no body sent)
+// Browser: uses cached version ✓
+
+// After file changes:
+// stat.mtime changes → new ETag → 200 OK + new file content
+</code></pre>
+        <div class="tip">
+            <strong>Cache-Control strategy:</strong> Use <code>max-age=31536000, immutable</code> for versioned assets (e.g., <code>app.v2.js</code>) and <code>no-cache</code> for HTML files that should always be validated. The <code>ETag</code> handles revalidation efficiently.
+        </div>
+
+        <h2>Streaming Large Files</h2>
+        <p>For large files (images, PDFs), loading the entire file into memory with <code>readFile</code> is wasteful. Use streams instead:</p>
+        <pre><code>const fs = require('fs'); // Note: NOT .promises — we need createReadStream
+
+function streamFile(res, filePath, contentType, stat) {
+  const etag = `"${stat.size}-${stat.mtime.getTime()}"`;
+
+  res.writeHead(200, {
+    'Content-Type':   contentType,
+    'Content-Length': stat.size,
+    'ETag':           etag,
+    'Cache-Control':  'public, max-age=86400',
+  });
+
+  // Stream directly from disk to response — no memory buffering
+  const stream = fs.createReadStream(filePath);
+  stream.pipe(res);
+
+  stream.on('error', () => {
+    res.destroy(); // Close connection on error
+  });
+}
+</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Use <code>fs.promises.readFile()</code> or <code>createReadStream()</code> for streaming</li>
+                <li>Always map file extensions to MIME types — browsers require them</li>
+                <li>Use <code>path.resolve()</code> + prefix check to prevent directory traversal</li>
+                <li>ETag + <code>304 Not Modified</code> saves bandwidth for repeat visitors</li>
+                <li>Set <code>Cache-Control</code> headers to let browsers cache assets</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-04-forms-post.html" style="color:#ff6b35;">Post #4</a>, we'll handle form submissions and POST requests — reading the request body chunk by chunk, parsing URL-encoded and JSON data, and implementing the redirect-after-POST pattern.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share your code on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

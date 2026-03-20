@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #2: Manual Routing — No Express Needed | syscraft906</title>
+    <meta name="description" content="Build a clean router.js module with URL pattern matching, URL parameters, query strings, and 404 handling — no Express required.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #2: Manual Routing — No Express Needed</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 9 min read</span>
+        <span>🏷 Node.js, Routing, URL</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">→ #2: Manual Routing — No Express Needed (you are here)</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>The Problem with Giant If-Else Chains</h2>
+        <p>In Post #1 we handled routes with simple <code>if (method === 'GET' &amp;&amp; url === '/')</code> checks. That works fine for two or three routes. But as your app grows, that handler function becomes a 200-line monstrosity — hard to read, harder to maintain.</p>
+        <p>Express solves this with <code>app.get('/todos/:id', handler)</code>. Today we'll build exactly that — a clean, reusable <code>router.js</code> module — using only the built-in <code>url</code> module and vanilla JavaScript.</p>
+
+        <div class="highlight">
+            <strong>What we're building:</strong> A router that supports static paths (<code>/todos</code>), dynamic parameters (<code>/todos/:id</code>), query strings (<code>?done=true</code>), and a clean registration API identical in style to Express.
+        </div>
+
+        <h2>How URL Parsing Works</h2>
+        <p>Every URL has up to three pieces we care about: the <strong>pathname</strong>, the <strong>query string</strong>, and any <strong>dynamic segments</strong>. Node's built-in <code>url</code> module (or the global <code>URL</code> class) splits these apart for us.</p>
+        <pre><code>const { URL } = require('url');
+
+// Parse a full URL
+const parsed = new URL('http://localhost:3000/todos/42?done=false');
+
+console.log(parsed.pathname);            // /todos/42
+console.log(parsed.searchParams.get('done')); // false
+
+// For relative paths in a request, provide a dummy base:
+function parseUrl(req) {
+  return new URL(req.url, 'http://localhost');
+}
+</code></pre>
+        <p>The <code>URL</code> class is available globally in Node.js v10+ — no <code>require</code> needed in modern Node. But requiring it explicitly is fine and makes dependencies obvious.</p>
+
+        <h2>Pattern Matching: Static vs Dynamic Routes</h2>
+        <p>The tricky part is matching a registered pattern like <code>/todos/:id</code> against a real URL like <code>/todos/42</code>. We need to:</p>
+        <ol>
+            <li>Split both strings by <code>/</code></li>
+            <li>Compare segment by segment</li>
+            <li>Treat segments starting with <code>:</code> as wildcards and capture their values</li>
+        </ol>
+        <pre><code>// router.js
+function matchRoute(pattern, pathname) {
+  const patternParts = pattern.split('/').filter(Boolean);
+  const pathParts    = pathname.split('/').filter(Boolean);
+
+  if (patternParts.length !== pathParts.length) return null;
+
+  const params = {};
+
+  for (let i = 0; i &lt; patternParts.length; i++) {
+    const p = patternParts[i];
+    const v = pathParts[i];
+
+    if (p.startsWith(':')) {
+      // Dynamic segment — capture the value
+      params[p.slice(1)] = decodeURIComponent(v);
+    } else if (p !== v) {
+      // Static segment mismatch — no match
+      return null;
+    }
+  }
+
+  return params; // { id: '42' } or {} for static routes
+}
+</code></pre>
+        <div class="tip">
+            <strong>Why <code>filter(Boolean)</code>?</strong> Splitting <code>/todos/42</code> by <code>/</code> gives <code>['', 'todos', '42']</code>. The leading empty string would mess up segment comparison. <code>filter(Boolean)</code> removes all falsy values.
+        </div>
+
+        <h2>Building the Router Class</h2>
+        <p>Now let's wrap the matching logic into a clean Router class with Express-style registration:</p>
+        <pre><code>// router.js
+'use strict';
+
+class Router {
+  constructor() {
+    this.routes = [];
+  }
+
+  // Register a route: method is 'GET', 'POST', etc. or '*' for any
+  add(method, pattern, handler) {
+    this.routes.push({ method: method.toUpperCase(), pattern, handler });
+  }
+
+  // Shorthand helpers
+  get(pattern, handler)    { this.add('GET',    pattern, handler); }
+  post(pattern, handler)   { this.add('POST',   pattern, handler); }
+  put(pattern, handler)    { this.add('PUT',    pattern, handler); }
+  delete(pattern, handler) { this.add('DELETE', pattern, handler); }
+
+  // Call this from http.createServer
+  handle(req, res) {
+    const parsed   = new URL(req.url, 'http://localhost');
+    const pathname = parsed.pathname;
+    const query    = Object.fromEntries(parsed.searchParams);
+
+    for (const route of this.routes) {
+      if (route.method !== req.method &amp;&amp; route.method !== '*') continue;
+
+      const params = matchRoute(route.pattern, pathname);
+      if (params === null) continue;
+
+      // Attach parsed data to req for easy access in handlers
+      req.params = params;
+      req.query  = query;
+
+      route.handler(req, res);
+      return; // First match wins — just like Express
+    }
+
+    // No route matched → 404
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Route not found', path: pathname }));
+  }
+}
+
+function matchRoute(pattern, pathname) {
+  const patternParts = pattern.split('/').filter(Boolean);
+  const pathParts    = pathname.split('/').filter(Boolean);
+
+  // Special case: both empty = root '/'
+  if (patternParts.length === 0 &amp;&amp; pathParts.length === 0) return {};
+  if (patternParts.length !== pathParts.length) return null;
+
+  const params = {};
+  for (let i = 0; i &lt; patternParts.length; i++) {
+    const p = patternParts[i];
+    const v = pathParts[i];
+    if (p.startsWith(':')) {
+      params[p.slice(1)] = decodeURIComponent(v);
+    } else if (p !== v) {
+      return null;
+    }
+  }
+  return params;
+}
+
+module.exports = Router;
+</code></pre>
+
+        <h2>Using the Router in server.js</h2>
+        <p>Now our server becomes clean and readable:</p>
+        <pre><code>// server.js
+const http   = require('http');
+const Router = require('./router');
+
+const router = new Router();
+
+// Static route
+router.get('/', (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end('&lt;h1&gt;Welcome to Pure Node.js Todo&lt;/h1&gt;');
+});
+
+// Route with URL parameter
+router.get('/todos/:id', (req, res) => {
+  const { id } = req.params;
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ id, todo: `Todo #${id}` }));
+});
+
+// Route with query string: GET /todos?done=true
+router.get('/todos', (req, res) => {
+  const { done } = req.query; // 'true', 'false', or undefined
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ filter: done ?? 'all', todos: [] }));
+});
+
+// POST route
+router.post('/todos', (req, res) => {
+  res.writeHead(201, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ message: 'Created!' }));
+});
+
+// DELETE with parameter
+router.delete('/todos/:id', (req, res) => {
+  const { id } = req.params;
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ deleted: id }));
+});
+
+const server = http.createServer((req, res) => router.handle(req, res));
+server.listen(3000, () => console.log('http://localhost:3000'));
+</code></pre>
+
+        <h2>Testing the Routes</h2>
+        <p>Fire up the server and test with <code>curl</code>:</p>
+        <pre><code># Static route
+curl http://localhost:3000/
+
+# With URL parameter
+curl http://localhost:3000/todos/42
+# → {"id":"42","todo":"Todo #42"}
+
+# With query string
+curl "http://localhost:3000/todos?done=true"
+# → {"filter":"true","todos":[]}
+
+# POST
+curl -X POST http://localhost:3000/todos
+# → {"message":"Created!"}
+
+# DELETE
+curl -X DELETE http://localhost:3000/todos/42
+# → {"deleted":"42"}
+
+# 404 — no matching route
+curl http://localhost:3000/nonexistent
+# → {"error":"Route not found","path":"/nonexistent"}
+</code></pre>
+
+        <h2>Supporting Multiple Parameters</h2>
+        <p>Our router already supports multiple dynamic segments — no changes needed:</p>
+        <pre><code>// Works out of the box:
+router.get('/users/:userId/todos/:todoId', (req, res) => {
+  const { userId, todoId } = req.params;
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ userId, todoId }));
+});
+
+// curl http://localhost:3000/users/5/todos/99
+// → {"userId":"5","todoId":"99"}
+</code></pre>
+
+        <h2>Adding Middleware Support</h2>
+        <p>Express's killer feature is middleware. We can add basic middleware support — functions that run before handlers:</p>
+        <pre><code>class Router {
+  constructor() {
+    this.routes      = [];
+    this.middlewares = [];
+  }
+
+  use(fn) {
+    this.middlewares.push(fn);
+  }
+
+  handle(req, res) {
+    // Run all middlewares first (synchronous for simplicity)
+    for (const mw of this.middlewares) {
+      mw(req, res);
+    }
+
+    // ... rest of routing logic
+  }
+}
+
+// Usage: request logger middleware
+router.use((req, res) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+});
+</code></pre>
+        <div class="tip">
+            <strong>Production tip:</strong> For async middleware (e.g., auth checks that hit a database), you'd implement a next() chain similar to Express. We'll cover async patterns when we add sessions in Post #10.
+        </div>
+
+        <h2>404 vs 405: Method Not Allowed</h2>
+        <p>There's an important distinction: if a path exists but the method doesn't, you should return <code>405 Method Not Allowed</code>, not <code>404</code>. Let's improve the fallback:</p>
+        <pre><code>handle(req, res) {
+  const parsed   = new URL(req.url, 'http://localhost');
+  const pathname = parsed.pathname;
+  const query    = Object.fromEntries(parsed.searchParams);
+
+  // Check if path exists with any method
+  const pathExists = this.routes.some(r => matchRoute(r.pattern, pathname) !== null);
+
+  for (const route of this.routes) {
+    if (route.method !== req.method) continue;
+    const params = matchRoute(route.pattern, pathname);
+    if (params === null) continue;
+
+    req.params = params;
+    req.query  = query;
+    route.handler(req, res);
+    return;
+  }
+
+  if (pathExists) {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
+  } else {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found', path: pathname }));
+  }
+}
+</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Use the built-in <code>URL</code> class to split pathname from query string</li>
+                <li>Pattern matching: split by <code>/</code>, compare segments, capture <code>:params</code></li>
+                <li>A Router class with <code>.get()/.post()/.delete()</code> gives you Express-style ergonomics</li>
+                <li>First-match-wins is the standard routing strategy</li>
+                <li>Distinguish <code>404 Not Found</code> from <code>405 Method Not Allowed</code></li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-03-static-files.html" style="color:#ff6b35;">Post #3</a>, we'll serve real HTML, CSS, and JavaScript files from disk — with proper MIME types, caching headers, and protection against directory traversal attacks.</p>
+
+        <div class="tip">
+            <strong>Challenge:</strong> Extend the router to support wildcard routes like <code>/static/*</code> that match any path starting with <code>/static/</code>. Hint: check if the pattern ends with <code>/*</code> and handle it as a prefix match.
+        </div>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share your code on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

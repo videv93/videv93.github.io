@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #11: File Uploads & Image Serving | syscraft906</title>
+    <meta name="description" content="Handle file uploads and serve images in pure Node.js. Parse multipart/form-data manually and serve files with correct MIME types — no multer, no packages.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #11: File Uploads &amp; Image Serving</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 11 min read</span>
+        <span>🏷 Node.js, File Uploads, MIME, Streams</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">→ #11: File Uploads &amp; Image Serving (you are here)</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>How File Uploads Work</h2>
+        <p>When an HTML form has <code>enctype="multipart/form-data"</code>, the browser encodes files and text fields together in a special format, separated by a randomly generated boundary string. Packages like <code>multer</code> parse this for you. We'll do it ourselves.</p>
+
+        <h2>The HTML Upload Form</h2>
+        <pre><code>&lt;form action="/products" method="POST" enctype="multipart/form-data"&gt;
+  &lt;input type="text" name="name" placeholder="Product name" required /&gt;
+  &lt;input type="number" name="price" placeholder="Price" required /&gt;
+  &lt;input type="file" name="image" accept="image/*" /&gt;
+  &lt;button type="submit"&gt;Add Product&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+        <h2>Parsing multipart/form-data</h2>
+        <pre><code>// upload.js
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+const UPLOAD_DIR = path.join(__dirname, 'uploads');
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+async function parseMultipart(req) {
+  return new Promise((resolve, reject) => {
+    const contentType = req.headers['content-type'] || '';
+    const boundaryMatch = contentType.match(/boundary=(.+)$/);
+
+    if (!boundaryMatch) {
+      reject(new Error('No boundary in multipart request'));
+      return;
+    }
+
+    const boundary = '--' + boundaryMatch[1];
+    const chunks = [];
+    let totalSize = 0;
+
+    req.on('data', chunk => {
+      totalSize += chunk.length;
+      if (totalSize > MAX_FILE_SIZE * 2) {
+        req.destroy();
+        reject(new Error('Request too large'));
+        return;
+      }
+      chunks.push(chunk);
+    });
+
+    req.on('end', () => {
+      const body = Buffer.concat(chunks);
+      resolve(parseMultipartBody(body, boundary));
+    });
+
+    req.on('error', reject);
+  });
+}
+
+function parseMultipartBody(body, boundary) {
+  const fields = {};
+  const files = {};
+
+  // Split body on boundary
+  const boundaryBuf = Buffer.from(boundary);
+  const parts = splitBuffer(body, boundaryBuf);
+
+  for (const part of parts) {
+    // Each part has headers, blank line, then content
+    const headerEnd = part.indexOf('\r\n\r\n');
+    if (headerEnd === -1) continue;
+
+    const headerStr = part.slice(0, headerEnd).toString();
+    const content = part.slice(headerEnd + 4);
+
+    // Remove trailing \r\n
+    const data = content.slice(0, content.length - 2);
+
+    // Parse Content-Disposition header
+    const nameMatch = headerStr.match(/name="([^"]+)"/);
+    const filenameMatch = headerStr.match(/filename="([^"]+)"/);
+    const typeMatch = headerStr.match(/Content-Type: (.+)/i);
+
+    if (!nameMatch) continue;
+    const fieldName = nameMatch[1];
+
+    if (filenameMatch) {
+      // File field
+      files[fieldName] = {
+        filename: filenameMatch[1],
+        mimeType: typeMatch ? typeMatch[1].trim() : 'application/octet-stream',
+        data
+      };
+    } else {
+      // Text field
+      fields[fieldName] = data.toString('utf8');
+    }
+  }
+
+  return { fields, files };
+}
+
+// Helper: split a Buffer on a delimiter
+function splitBuffer(buffer, delimiter) {
+  const parts = [];
+  let start = 0;
+  let pos = buffer.indexOf(delimiter);
+
+  while (pos !== -1) {
+    if (pos > start) parts.push(buffer.slice(start, pos));
+    start = pos + delimiter.length;
+    pos = buffer.indexOf(delimiter, start);
+  }
+
+  if (start &lt; buffer.length) parts.push(buffer.slice(start));
+  return parts.filter(p => p.length > 2); // filter empty boundary parts
+}
+
+module.exports = { parseMultipart, UPLOAD_DIR, ALLOWED_TYPES, MAX_FILE_SIZE };</code></pre>
+
+        <h2>Saving the Uploaded File</h2>
+        <pre><code>async function saveUploadedFile(file) {
+  // Validate MIME type
+  if (!ALLOWED_TYPES.includes(file.mimeType)) {
+    throw new Error(`File type ${file.mimeType} not allowed`);
+  }
+
+  // Validate size
+  if (file.data.length > MAX_FILE_SIZE) {
+    throw new Error('File too large (max 5MB)');
+  }
+
+  // Generate safe filename — never use the user's filename directly
+  const ext = file.mimeType.split('/')[1].replace('jpeg', 'jpg');
+  const safeName = crypto.randomUUID() + '.' + ext;
+  const filePath = path.join(UPLOAD_DIR, safeName);
+
+  await fs.promises.writeFile(filePath, file.data);
+  return safeName;
+}</code></pre>
+
+        <div class="warning">
+            <strong>Never use the user's original filename.</strong> A user could upload a file named <code>../../server.js</code> or <code>malicious.php</code>. Always generate a new UUID-based filename and validate the MIME type from the Content-Type header (not the file extension).
+        </div>
+
+        <h2>Serving Uploaded Images</h2>
+        <pre><code>const MIME_TYPES = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+};
+
+async function serveUpload(req, res, filename) {
+  // Sanitize: only allow alphanumeric, dash, dot
+  if (!/^[\w\-.]+$/.test(filename)) {
+    res.writeHead(400); res.end('Bad filename');
+    return;
+  }
+
+  const filePath = path.join(UPLOAD_DIR, filename);
+  const ext = path.extname(filename).toLowerCase();
+  const mimeType = MIME_TYPES[ext];
+
+  if (!mimeType) {
+    res.writeHead(415); res.end('Unsupported media type');
+    return;
+  }
+
+  try {
+    const stat = await fs.promises.stat(filePath);
+
+    res.writeHead(200, {
+      'Content-Type': mimeType,
+      'Content-Length': stat.size,
+      'Cache-Control': 'public, max-age=31536000', // 1 year
+      'ETag': `"${stat.mtimeMs}"`,
+    });
+
+    // Stream the file — don't load it all into memory
+    fs.createReadStream(filePath).pipe(res);
+  } catch {
+    res.writeHead(404); res.end('Not found');
+  }
+}</code></pre>
+
+        <h2>The Upload Handler</h2>
+        <pre><code>// handlers/products.js
+const { parseMultipart, saveUploadedFile } = require('../upload');
+const db = require('../db/products');
+
+async function handleCreateProduct(req, res) {
+  const { fields, files } = await parseMultipart(req);
+
+  const name = fields.name?.trim();
+  const price = parseFloat(fields.price);
+
+  if (!name || isNaN(price)) {
+    res.writeHead(422, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Name and valid price required' }));
+    return;
+  }
+
+  let imageFilename = null;
+  if (files.image && files.image.data.length > 0) {
+    try {
+      imageFilename = await saveUploadedFile(files.image);
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+      return;
+    }
+  }
+
+  await db.create({ name, price, image: imageFilename });
+  res.writeHead(303, { Location: '/products' });
+  res.end();
+}</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Parse the <code>boundary</code> from Content-Type header, split body on it</li>
+                <li>Always generate a new UUID filename — never use the user's filename</li>
+                <li>Validate MIME type from header, not file extension</li>
+                <li>Stream files with <code>fs.createReadStream().pipe(res)</code> — don't load large files into memory</li>
+                <li>Set <code>Cache-Control: max-age</code> on static assets for browser caching</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In the final post — <a href="/blog-nodejs-12-deploy.html" style="color:#ff6b35;">Post #12</a> — we deploy our pure Node.js store to a VPS, set up nginx as a reverse proxy, and configure systemd to keep the server running forever.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

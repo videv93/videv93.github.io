@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #10: Sessions & Cookies Without Packages | syscraft906</title>
+    <meta name="description" content="Implement sessions and cookies from scratch in pure Node.js. Learn Set-Cookie headers, cookie parsing, and in-memory session stores without npm packages.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #10: Sessions &amp; Cookies Without Packages</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 10 min read</span>
+        <span>🏷 Node.js, Sessions, Cookies, Auth</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">→ #10: Sessions &amp; Cookies Without Packages (you are here)</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>How Cookies and Sessions Work</h2>
+        <p>HTTP is stateless — every request is independent. Cookies are the mechanism browsers use to maintain state. The server sends a <code>Set-Cookie</code> header, the browser stores it, and sends it back on every subsequent request via the <code>Cookie</code> header.</p>
+        <p>Sessions take this further: the cookie stores only a random ID. The actual session data (who is logged in, what's in the cart) lives server-side, looked up by that ID.</p>
+
+        <h2>Parsing Cookies</h2>
+        <pre><code>// session.js
+function parseCookies(req) {
+  const cookieHeader = req.headers.cookie || '';
+  const cookies = {};
+
+  cookieHeader.split(';').forEach(pair => {
+    const [key, ...vals] = pair.trim().split('=');
+    if (key) cookies[key.trim()] = decodeURIComponent(vals.join('='));
+  });
+
+  return cookies;
+}</code></pre>
+
+        <h2>Setting Cookies</h2>
+        <pre><code>function setCookie(res, name, value, options = {}) {
+  const parts = [`${name}=${encodeURIComponent(value)}`];
+
+  if (options.maxAge) parts.push(`Max-Age=${options.maxAge}`);
+  if (options.path) parts.push(`Path=${options.path}`);
+  if (options.httpOnly) parts.push('HttpOnly');
+  if (options.secure) parts.push('Secure');
+  if (options.sameSite) parts.push(`SameSite=${options.sameSite}`);
+
+  res.setHeader('Set-Cookie', parts.join('; '));
+}</code></pre>
+
+        <h2>In-Memory Session Store</h2>
+        <pre><code>const crypto = require('crypto');
+
+// sessionId → { data, createdAt, expiresAt }
+const sessions = new Map();
+
+const SESSION_COOKIE = 'sid';
+const SESSION_MAX_AGE = 60 * 60 * 24; // 24 hours in seconds
+
+function createSession(res, data = {}) {
+  const sessionId = crypto.randomBytes(32).toString('hex');
+  const now = Date.now();
+
+  sessions.set(sessionId, {
+    data,
+    createdAt: now,
+    expiresAt: now + SESSION_MAX_AGE * 1000
+  });
+
+  setCookie(res, SESSION_COOKIE, sessionId, {
+    maxAge: SESSION_MAX_AGE,
+    httpOnly: true,   // JS can't read it — XSS protection
+    sameSite: 'Lax',  // CSRF protection
+    path: '/'
+  });
+
+  return sessionId;
+}
+
+function getSession(req) {
+  const cookies = parseCookies(req);
+  const sessionId = cookies[SESSION_COOKIE];
+  if (!sessionId) return null;
+
+  const session = sessions.get(sessionId);
+  if (!session) return null;
+
+  // Check expiry
+  if (Date.now() > session.expiresAt) {
+    sessions.delete(sessionId);
+    return null;
+  }
+
+  return session.data;
+}
+
+function destroySession(req, res) {
+  const cookies = parseCookies(req);
+  const sessionId = cookies[SESSION_COOKIE];
+  if (sessionId) sessions.delete(sessionId);
+
+  setCookie(res, SESSION_COOKIE, '', { maxAge: 0, path: '/' });
+}
+
+// Cleanup expired sessions periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, session] of sessions) {
+    if (now > session.expiresAt) sessions.delete(id);
+  }
+}, 60_000); // every minute
+
+module.exports = { createSession, getSession, destroySession };</code></pre>
+
+        <div class="tip">
+            <strong>HttpOnly + SameSite:</strong> <code>HttpOnly</code> prevents JavaScript from reading the cookie (mitigates XSS attacks). <code>SameSite=Lax</code> prevents the cookie from being sent in cross-site requests (mitigates CSRF attacks). Always set both for session cookies.
+        </div>
+
+        <h2>Login Handler</h2>
+        <pre><code>// handlers/auth.js
+const { createSession, destroySession } = require('../session');
+
+// Simple in-memory user store (use a real DB in production)
+const users = new Map([
+  ['admin', { password: 'secret', name: 'Admin User' }]
+]);
+
+async function handleLogin(req, res) {
+  const body = await readBody(req);
+  const params = new URLSearchParams(body);
+  const username = params.get('username');
+  const password = params.get('password');
+
+  const user = users.get(username);
+  if (!user || user.password !== password) {
+    res.writeHead(401, { 'Content-Type': 'text/html' });
+    res.end('&lt;p&gt;Invalid credentials&lt;/p&gt;');
+    return;
+  }
+
+  createSession(res, { username, name: user.name });
+
+  res.writeHead(303, { Location: '/dashboard' });
+  res.end();
+}
+
+function handleLogout(req, res) {
+  destroySession(req, res);
+  res.writeHead(303, { Location: '/login' });
+  res.end();
+}
+
+module.exports = { handleLogin, handleLogout };</code></pre>
+
+        <h2>Protecting Routes</h2>
+        <pre><code>// middleware/auth.js
+const { getSession } = require('../session');
+
+function requireAuth(handler) {
+  return function(req, res, params) {
+    const session = getSession(req);
+    if (!session) {
+      res.writeHead(303, { Location: '/login' });
+      res.end();
+      return;
+    }
+    // Attach session to request for use in handler
+    req.session = session;
+    return handler(req, res, params);
+  };
+}
+
+// Usage in router
+router.add('GET', '/dashboard', requireAuth(handleDashboard));
+router.add('GET', '/products', requireAuth(handleProducts));</code></pre>
+
+        <div class="warning">
+            <strong>Production warning:</strong> This in-memory session store resets on server restart. For production, persist sessions in Redis or a database. Also use <code>bcrypt</code> (or Node's built-in <code>crypto.scrypt</code>) for password hashing — never store plain text passwords.
+        </div>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Parse cookies by splitting the <code>Cookie</code> header on <code>;</code> then <code>=</code></li>
+                <li>Session IDs should be <code>crypto.randomBytes(32)</code> — 256 bits of entropy</li>
+                <li>Always set <code>HttpOnly</code> and <code>SameSite=Lax</code> on session cookies</li>
+                <li><code>Map</code> is a fast in-memory session store; use Redis in production</li>
+                <li>Higher-order functions make great auth middleware</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-11-file-uploads.html" style="color:#ff6b35;">Post #11</a>, we add product images to our store — implementing multipart form uploads and image serving without any packages.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

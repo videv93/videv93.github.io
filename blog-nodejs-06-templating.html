@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #6: HTML Templating with String Interpolation | syscraft906</title>
+    <meta name="description" content="Build a mini HTML template engine in pure Node.js using template literals. No Handlebars, no EJS — just JavaScript string interpolation.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #6: HTML Templating with String Interpolation</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 8 min read</span>
+        <span>🏷 Node.js, Templates, HTML, XSS</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">→ #6: HTML Templating with String Interpolation (you are here)</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>Building a Dashboard Without a Template Engine</h2>
+        <p>We start Module 2 — the Dashboard app. A dashboard needs to render dynamic HTML: tables of data, stats, charts. Template engines like EJS or Handlebars make this easy, but they're npm packages. JavaScript's template literals give us everything we need.</p>
+
+        <h2>The Critical Rule: Always Escape User Data</h2>
+        <p>Before anything else — if you interpolate user data into HTML without escaping, you create an XSS vulnerability. A user could enter <code>&lt;script&gt;alert('hacked')&lt;/script&gt;</code> as a todo title and it would execute in every visitor's browser.</p>
+        <pre><code>// ALWAYS escape user data before putting it in HTML
+function escape(str) {
+  return String(str)
+    .replace(/&amp;/g, '&amp;amp;')
+    .replace(/&lt;/g, '&amp;lt;')
+    .replace(/&gt;/g, '&amp;gt;')
+    .replace(/"/g, '&amp;quot;')
+    .replace(/'/g, '&amp;#x27;');
+}
+
+// Safe usage:
+const title = '&lt;script&gt;alert("xss")&lt;/script&gt;';
+const html = `&lt;p&gt;${escape(title)}&lt;/p&gt;`;
+// → &lt;p&gt;&amp;lt;script&amp;gt;alert("xss")&amp;lt;/script&amp;gt;&lt;/p&gt;
+// Renders as text, not as executable script</code></pre>
+
+        <div class="warning">
+            <strong>Security rule:</strong> Use <code>escape()</code> on every piece of user-controlled data you insert into HTML. The only exception is when you explicitly want to insert trusted HTML (e.g., your own template partials).
+        </div>
+
+        <h2>Building the Layout System</h2>
+        <pre><code>// templates/layout.js
+function layout(title, content) {
+  return `&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;${escape(title)} | Dashboard&lt;/title&gt;
+  &lt;link rel="stylesheet" href="/style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;nav&gt;
+    &lt;a href="/"&gt;Dashboard&lt;/a&gt;
+    &lt;a href="/todos"&gt;Todos&lt;/a&gt;
+    &lt;a href="/stats"&gt;Stats&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;main&gt;
+    ${content}
+  &lt;/main&gt;
+  &lt;footer&gt;&lt;p&gt;Built with pure Node.js&lt;/p&gt;&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;`;
+}
+
+module.exports = { layout, escape };</code></pre>
+
+        <h2>Rendering Lists</h2>
+        <pre><code>// templates/todos.js
+const { layout, escape } = require('./layout');
+
+function todoItem(todo) {
+  return `
+    &lt;li class="todo-item ${todo.done ? 'done' : ''}"&gt;
+      &lt;span&gt;${escape(todo.title)}&lt;/span&gt;
+      &lt;form action="/todos/${escape(todo.id)}/toggle" method="POST"&gt;
+        &lt;button&gt;${todo.done ? 'Undo' : 'Done'}&lt;/button&gt;
+      &lt;/form&gt;
+      &lt;form action="/todos/${escape(todo.id)}/delete" method="POST"&gt;
+        &lt;button class="danger"&gt;Delete&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/li&gt;
+  `;
+}
+
+function todosPage(todos) {
+  const items = todos.length
+    ? todos.map(todoItem).join('')
+    : '&lt;li class="empty"&gt;No todos yet. Add one above!&lt;/li&gt;';
+
+  const content = `
+    &lt;h1&gt;Todos (${todos.length})&lt;/h1&gt;
+    &lt;form action="/todos" method="POST" class="add-form"&gt;
+      &lt;input name="title" placeholder="What needs to be done?" required /&gt;
+      &lt;button type="submit"&gt;Add&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;ul class="todo-list"&gt;${items}&lt;/ul&gt;
+  `;
+
+  return layout('Todos', content);
+}
+
+module.exports = { todosPage };</code></pre>
+
+        <h2>Rendering Data Tables</h2>
+        <pre><code>function dataTable(headers, rows) {
+  const headerRow = headers
+    .map(h => `&lt;th&gt;${escape(h)}&lt;/th&gt;`)
+    .join('');
+
+  const bodyRows = rows
+    .map(row =>
+      `&lt;tr&gt;${row.map(cell => `&lt;td&gt;${escape(String(cell))}&lt;/td&gt;`).join('')}&lt;/tr&gt;`
+    )
+    .join('');
+
+  return `
+    &lt;table&gt;
+      &lt;thead&gt;&lt;tr&gt;${headerRow}&lt;/tr&gt;&lt;/thead&gt;
+      &lt;tbody&gt;${bodyRows}&lt;/tbody&gt;
+    &lt;/table&gt;
+  `;
+}
+
+// Usage:
+const table = dataTable(
+  ['Title', 'Status', 'Created'],
+  todos.map(t => [t.title, t.done ? 'Done' : 'Pending', t.createdAt])
+);</code></pre>
+
+        <h2>Rendering Stats Cards</h2>
+        <pre><code>function statsCard(label, value, unit = '') {
+  return `
+    &lt;div class="stat-card"&gt;
+      &lt;div class="stat-value"&gt;${escape(String(value))}${unit}&lt;/div&gt;
+      &lt;div class="stat-label"&gt;${escape(label)}&lt;/div&gt;
+    &lt;/div&gt;
+  `;
+}
+
+function dashboardPage(todos) {
+  const total = todos.length;
+  const done = todos.filter(t =&gt; t.done).length;
+  const pending = total - done;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+
+  const content = `
+    &lt;h1&gt;Dashboard&lt;/h1&gt;
+    &lt;div class="stats-grid"&gt;
+      ${statsCard('Total Todos', total)}
+      ${statsCard('Completed', done)}
+      ${statsCard('Pending', pending)}
+      ${statsCard('Completion', pct, '%')}
+    &lt;/div&gt;
+  `;
+
+  return layout('Dashboard', content);
+}</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Template literals (<code>`backticks`</code>) are your template engine</li>
+                <li>Always <code>escape()</code> user data before inserting into HTML</li>
+                <li>Build composable functions: <code>layout()</code> wraps <code>content()</code> wraps <code>item()</code></li>
+                <li>Arrays of strings joined with <code>.join('')</code> = loops in templates</li>
+                <li>This is exactly how EJS/Handlebars work — just without the package overhead</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-07-vanilla-ui.html" style="color:#ff6b35;">Post #7</a>, we build the frontend — using the Fetch API and the HTML5 Canvas to create a live dashboard with charts, all in vanilla JavaScript with zero libraries.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

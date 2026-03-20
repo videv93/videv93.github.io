@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #1: Build an HTTP Server From Scratch | syscraft906</title>
+    <meta name="description" content="Learn how to build an HTTP server from scratch using only Node.js built-in modules. No Express, no npm packages — just pure Node.js.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #1: Build an HTTP Server From Scratch</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 8 min read</span>
+        <span>🏷 Node.js, HTTP, Fundamentals</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">→ #1: Build an HTTP Server From Scratch (you are here)</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>Why Learn Pure Node.js?</h2>
+        <p>Every Node.js developer reaches for Express the moment they need a server. And that's fine — Express is great. But do you actually know what it's doing under the hood?</p>
+        <p>In this 12-part series, we build four real web apps — a Todo list, a Dashboard, a real-time Chat, and a mini Store — using <strong>zero npm packages</strong>. No Express, no body-parser, no cors, no nothing. Just pure Node.js built-in modules.</p>
+        <div class="highlight">
+            <strong>What you'll gain:</strong> Deep understanding of HTTP, routing, sessions, WebSockets, and deployment. This knowledge makes you a better engineer — even if you use frameworks every day. You'll never again wonder "what does Express actually do?"
+        </div>
+
+        <h2>Prerequisites</h2>
+        <ul>
+            <li>Node.js installed (v18+ recommended)</li>
+            <li>Basic JavaScript knowledge</li>
+            <li>A terminal and a text editor</li>
+            <li>No <code>npm install</code> — ever</li>
+        </ul>
+
+        <h2>The Built-in <code>http</code> Module</h2>
+        <p>Node.js ships with a built-in <code>http</code> module. This is what Express, Fastify, Koa, and every other Node.js framework wraps. When you call <code>app.listen(3000)</code> in Express, it's calling <code>http.createServer()</code> internally.</p>
+        <p>Let's use it directly.</p>
+
+        <h2>Your First HTTP Server</h2>
+        <p>Create a file called <code>server.js</code>:</p>
+        <pre><code>// server.js
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Hello, World!');
+});
+
+server.listen(3000, () => {
+  console.log('Server running at http://localhost:3000');
+});</code></pre>
+        <p>Run it with <code>node server.js</code> and open <code>http://localhost:3000</code> — you'll see "Hello, World!".</p>
+        <div class="tip">
+            <strong>What just happened?</strong> <code>http.createServer()</code> creates a server. Every incoming request calls your callback with two objects: <code>req</code> (the request) and <code>res</code> (the response). That's the entire HTTP lifecycle in Node.js.
+        </div>
+
+        <h2>The Request Object</h2>
+        <p>The <code>req</code> object contains everything about the incoming request:</p>
+        <pre><code>const http = require('http');
+
+const server = http.createServer((req, res) => {
+  console.log('Method:', req.method);    // GET, POST, PUT, DELETE
+  console.log('URL:',    req.url);       // /todos, /about, /api/users
+  console.log('Headers:', req.headers); // all browser headers
+
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end(`${req.method} ${req.url}`);
+});
+
+server.listen(3000);</code></pre>
+
+        <h2>The Response Object</h2>
+        <p>The <code>res</code> object is how you send data back:</p>
+        <pre><code>// Set status + headers together
+res.writeHead(200, { 'Content-Type': 'text/html' });
+
+// Or separately
+res.statusCode = 404;
+res.setHeader('Content-Type', 'application/json');
+
+// Send the body and close the connection
+res.end('Response body here');</code></pre>
+        <div class="warning">
+            <strong>Always call <code>res.end()</code>.</strong> If you forget it, the browser will hang waiting forever. The connection stays open until you end it.
+        </div>
+
+        <h2>Responding with Different Content Types</h2>
+        <h3>HTML</h3>
+        <pre><code>res.writeHead(200, { 'Content-Type': 'text/html' });
+res.end('&lt;h1&gt;Hello&lt;/h1&gt;&lt;p&gt;This is HTML&lt;/p&gt;');</code></pre>
+
+        <h3>JSON</h3>
+        <pre><code>const data = { todos: [], count: 0 };
+res.writeHead(200, { 'Content-Type': 'application/json' });
+res.end(JSON.stringify(data));</code></pre>
+
+        <h3>404 Not Found</h3>
+        <pre><code>res.writeHead(404, { 'Content-Type': 'text/plain' });
+res.end('404 — Page Not Found');</code></pre>
+
+        <h2>Building the Todo App Server Foundation</h2>
+        <p>Here's the skeleton we'll build on through this series:</p>
+        <pre><code>// server.js
+const http = require('http');
+
+const PORT = process.env.PORT || 3000;
+
+function handleRequest(req, res) {
+  const { method, url } = req;
+
+  // Simple request logger
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${method} ${url}`);
+
+  // Home page
+  if (method === 'GET' && url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(`
+      &lt;!DOCTYPE html&gt;
+      &lt;html&gt;
+        &lt;head&gt;&lt;title&gt;Pure Node.js Todo&lt;/title&gt;&lt;/head&gt;
+        &lt;body&gt;
+          &lt;h1&gt;Pure Node.js Todo App&lt;/h1&gt;
+          &lt;p&gt;No frameworks. No packages. Just Node.js.&lt;/p&gt;
+          &lt;a href="/todos"&gt;View Todos&lt;/a&gt;
+        &lt;/body&gt;
+      &lt;/html&gt;
+    `);
+    return;
+  }
+
+  // Todos API (stub — we'll fill this in later)
+  if (method === 'GET' && url === '/todos') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ todos: [], message: 'Coming soon!' }));
+    return;
+  }
+
+  // 404 fallback
+  res.writeHead(404, { 'Content-Type': 'text/html' });
+  res.end('&lt;h1&gt;404 — Not Found&lt;/h1&gt;');
+}
+
+const server = http.createServer(handleRequest);
+
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});</code></pre>
+
+        <h2>How the Event Loop Handles Concurrency</h2>
+        <p>Node.js is single-threaded but handles thousands of concurrent requests. How? The <strong>event loop</strong>.</p>
+        <p>When a request comes in, Node registers a callback and immediately moves on to the next request. When the response is ready (after I/O completes), the callback fires. Nothing blocks. This is why Node.js excels at I/O-heavy workloads like web servers.</p>
+        <pre><code>// Under the hood, every request works like this:
+// 1. Request arrives  → callback queued in event loop
+// 2. Node moves on    → handles next request immediately
+// 3. I/O completes    → callback fires → response sent
+// All on a single thread — no thread pools, no blocking</code></pre>
+
+        <h2>Project Structure for This Series</h2>
+        <pre><code>todo-app/
+├── server.js          ← HTTP server (this post)
+├── router.js          ← URL routing (post #2)
+├── static/            ← HTML, CSS, JS files (post #3)
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+├── handlers/
+│   └── todos.js       ← Route handlers (post #4)
+└── data/
+    └── todos.json     ← File-based database (post #5)</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li><code>http.createServer(cb)</code> — the foundation of every Node.js web server</li>
+                <li><code>req.method</code> and <code>req.url</code> — how you identify what the client wants</li>
+                <li><code>res.writeHead()</code> — sets status code and response headers</li>
+                <li><code>res.end()</code> — sends body and closes the connection</li>
+                <li>The event loop — how Node handles concurrency without threads</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-02-routing.html" style="color:#ff6b35;">Post #2</a>, we'll extract routing into a clean <code>router.js</code> module — no more giant if-else chains. We'll handle URL parameters like <code>/todos/42</code> and build a proper route matching system.</p>
+
+        <div class="tip">
+            <strong>Challenge before Post #2:</strong> Add a <code>/health</code> route that returns <code>{ status: "ok", uptime: process.uptime() }</code> as JSON. Then try sending a 405 Method Not Allowed when someone POSTs to a GET-only route.
+        </div>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share your code on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

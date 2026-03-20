@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #8: WebSockets From Scratch | syscraft906</title>
+    <meta name="description" content="Implement WebSockets from scratch in pure Node.js. Learn the HTTP upgrade handshake, frame parsing, and SHA-1 key generation using only built-in modules.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #8: WebSockets From Scratch</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 12 min read</span>
+        <span>🏷 Node.js, WebSockets, TCP, Real-time</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">→ #8: WebSockets From Scratch (you are here)</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>How WebSockets Actually Work</h2>
+        <p>WebSocket is a protocol that starts as HTTP and then upgrades to a persistent, full-duplex TCP connection. The browser sends an HTTP Upgrade request, the server responds with a handshake, and from that point on both sides can send messages freely — no request/response cycle needed.</p>
+
+        <div class="highlight">
+            <strong>WebSocket vs HTTP:</strong>
+            HTTP is request-response: client asks, server answers, connection closes.
+            WebSocket is full-duplex: both sides can send data at any time over a persistent connection. This is what makes real-time chat, live dashboards, and multiplayer games possible.
+        </div>
+
+        <h2>Step 1: Intercept the Upgrade Request</h2>
+        <p>WebSocket connections start as regular HTTP requests with a special <code>Upgrade: websocket</code> header. We intercept them on the server's <code>upgrade</code> event:</p>
+        <pre><code>// ws.js
+const crypto = require('crypto');
+const http = require('http');
+
+const WS_MAGIC = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+
+function handleUpgrade(req, socket) {
+  const key = req.headers['sec-websocket-key'];
+
+  if (!key) {
+    socket.destroy();
+    return;
+  }
+
+  // Generate the accept key: SHA-1(client_key + magic_string), base64
+  const acceptKey = crypto
+    .createHash('sha1')
+    .update(key + WS_MAGIC)
+    .digest('base64');
+
+  // Send the HTTP 101 Switching Protocols response
+  socket.write(
+    'HTTP/1.1 101 Switching Protocols\r\n' +
+    'Upgrade: websocket\r\n' +
+    'Connection: Upgrade\r\n' +
+    `Sec-WebSocket-Accept: ${acceptKey}\r\n` +
+    '\r\n'
+  );
+
+  // From here: socket is a raw TCP stream, not HTTP
+  return socket;
+}
+
+module.exports = { handleUpgrade };</code></pre>
+
+        <h2>Step 2: Parse WebSocket Frames</h2>
+        <p>After the handshake, data is sent as WebSocket frames. Each frame has a specific binary format:</p>
+        <pre><code>// Frame format:
+// Byte 0: FIN bit + opcode (0x81 = text frame)
+// Byte 1: MASK bit + payload length
+// Bytes 2-5: masking key (if MASK bit set)
+// Rest: payload XOR'd with masking key
+
+function parseFrame(buffer) {
+  const firstByte = buffer[0];
+  const secondByte = buffer[1];
+
+  const isFinalFrame = Boolean((firstByte >>> 7) & 0x01);
+  const opcode = firstByte & 0x0f;
+  const isMasked = Boolean((secondByte >>> 7) & 0x01);
+
+  // opcodes: 0x1 = text, 0x2 = binary, 0x8 = close, 0x9 = ping, 0xa = pong
+  if (opcode === 0x8) return { type: 'close' };
+  if (opcode === 0x9) return { type: 'ping' };
+
+  let payloadLength = secondByte & 0x7f;
+  let offset = 2;
+
+  if (payloadLength === 126) {
+    payloadLength = buffer.readUInt16BE(offset);
+    offset += 2;
+  } else if (payloadLength === 127) {
+    payloadLength = buffer.readBigUInt64BE(offset);
+    offset += 8;
+  }
+
+  // Client frames are always masked
+  let payload;
+  if (isMasked) {
+    const mask = buffer.slice(offset, offset + 4);
+    offset += 4;
+    const masked = buffer.slice(offset, offset + payloadLength);
+    payload = Buffer.alloc(Number(payloadLength));
+    for (let i = 0; i &lt; Number(payloadLength); i++) {
+      payload[i] = masked[i] ^ mask[i % 4];
+    }
+  } else {
+    payload = buffer.slice(offset, offset + payloadLength);
+  }
+
+  return {
+    type: 'message',
+    data: payload.toString('utf8'),
+    isFinalFrame
+  };
+}
+
+module.exports = { handleUpgrade, parseFrame };</code></pre>
+
+        <h2>Step 3: Send WebSocket Frames</h2>
+        <p>Sending from server to client is simpler — server frames are not masked:</p>
+        <pre><code>function buildFrame(message) {
+  const payload = Buffer.from(message, 'utf8');
+  const length = payload.length;
+
+  let header;
+  if (length &lt;= 125) {
+    header = Buffer.alloc(2);
+    header[0] = 0x81; // FIN + text opcode
+    header[1] = length;
+  } else if (length &lt;= 65535) {
+    header = Buffer.alloc(4);
+    header[0] = 0x81;
+    header[1] = 126;
+    header.writeUInt16BE(length, 2);
+  } else {
+    header = Buffer.alloc(10);
+    header[0] = 0x81;
+    header[1] = 127;
+    header.writeBigUInt64BE(BigInt(length), 2);
+  }
+
+  return Buffer.concat([header, payload]);
+}
+
+function sendMessage(socket, message) {
+  socket.write(buildFrame(message));
+}
+
+module.exports = { handleUpgrade, parseFrame, sendMessage };</code></pre>
+
+        <h2>Step 4: Wire It Into the HTTP Server</h2>
+        <pre><code>// server.js
+const http = require('http');
+const { handleUpgrade, parseFrame, sendMessage } = require('./ws');
+
+const server = http.createServer((req, res) => {
+  // ... normal HTTP routes
+});
+
+// Intercept WebSocket upgrade requests
+server.on('upgrade', (req, socket) => {
+  if (req.headers.upgrade !== 'websocket') {
+    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+    return;
+  }
+
+  const ws = handleUpgrade(req, socket);
+
+  console.log('WebSocket client connected');
+
+  // Listen for incoming messages
+  ws.on('data', (buffer) => {
+    const frame = parseFrame(buffer);
+
+    if (frame.type === 'close') {
+      ws.destroy();
+      return;
+    }
+
+    if (frame.type === 'message') {
+      console.log('Received:', frame.data);
+      // Echo back for now
+      sendMessage(ws, `Echo: ${frame.data}`);
+    }
+  });
+
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
+
+server.listen(3000);</code></pre>
+
+        <h2>Step 5: Connect from the Browser</h2>
+        <pre><code>// static/chat.js
+const ws = new WebSocket('ws://localhost:3000');
+
+ws.addEventListener('open', () => {
+  console.log('Connected!');
+  ws.send(JSON.stringify({ type: 'join', username: 'Alice' }));
+});
+
+ws.addEventListener('message', (event) => {
+  const msg = JSON.parse(event.data);
+  console.log('Received:', msg);
+});
+
+ws.addEventListener('close', () => {
+  console.log('Disconnected');
+});
+
+// Send a message
+ws.send(JSON.stringify({ type: 'message', text: 'Hello!' }));</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>WebSocket starts as HTTP, then upgrades to raw TCP via <code>101 Switching Protocols</code></li>
+                <li>The handshake uses SHA-1(<code>client_key + magic_string</code>) — built into <code>crypto</code> module</li>
+                <li>Frames are binary — FIN bit, opcode, mask bit, payload length, masking key, payload</li>
+                <li>Client → server frames are always masked; server → client are not</li>
+                <li>The browser's <code>WebSocket</code> API handles all this complexity on the client side</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-09-chat-rooms.html" style="color:#ff6b35;">Post #9</a>, we build the full chat app on top of this WebSocket foundation — with rooms, usernames, broadcast, and a complete vanilla JS chat UI.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

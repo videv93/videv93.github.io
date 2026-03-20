@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #4: Handling Forms & POST Requests | syscraft906</title>
+    <meta name="description" content="Learn how to handle HTML forms and POST requests in pure Node.js — no body-parser, no Express. Parse form data and JSON from scratch.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #4: Handling Forms &amp; POST Requests</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 9 min read</span>
+        <span>🏷 Node.js, Forms, HTTP, POST</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">→ #4: Handling Forms &amp; POST Requests (you are here)</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>The Problem With POST Requests</h2>
+        <p>GET requests are simple — the data is in the URL. But POST requests carry data in the request <em>body</em>, and that body arrives as a stream of chunks. This is one area where Express's <code>body-parser</code> middleware quietly does a lot of work for you. In this post, we do it ourselves.</p>
+
+        <h2>How HTTP Bodies Work</h2>
+        <p>When a browser submits a form, the data is sent in the request body as a stream. Node.js gives you that stream via events on the <code>req</code> object — you listen for <code>data</code> events to collect chunks, then the <code>end</code> event when all data has arrived.</p>
+        <pre><code>function readBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+
+    req.on('data', (chunk) => {
+      chunks.push(chunk);
+
+      // Security: limit body size to 1MB
+      if (chunks.reduce((acc, c) => acc + c.length, 0) > 1_000_000) {
+        req.destroy();
+        reject(new Error('Payload too large'));
+      }
+    });
+
+    req.on('end', () => {
+      resolve(Buffer.concat(chunks).toString());
+    });
+
+    req.on('error', reject);
+  });
+}</code></pre>
+
+        <h2>Parsing Form Data</h2>
+        <p>When an HTML form uses <code>method="POST"</code> and no <code>enctype</code>, the browser sends data as <code>application/x-www-form-urlencoded</code> — a format like <code>title=Buy+milk&done=false</code>. We can parse this with the built-in <code>URLSearchParams</code>:</p>
+        <pre><code>// Handler for POST /todos
+async function handleCreateTodo(req, res) {
+  const contentType = req.headers['content-type'] || '';
+  const body = await readBody(req);
+
+  let title = '';
+
+  if (contentType.includes('application/x-www-form-urlencoded')) {
+    // Parse: "title=Buy+milk&priority=high"
+    const params = new URLSearchParams(body);
+    title = params.get('title') || '';
+  } else if (contentType.includes('application/json')) {
+    // Parse JSON body from fetch() calls
+    const data = JSON.parse(body);
+    title = data.title || '';
+  }
+
+  // Validate
+  if (!title.trim()) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Title is required' }));
+    return;
+  }
+
+  // Create the todo (we'll persist in Post #5)
+  const todo = {
+    id: Date.now().toString(),
+    title: title.trim(),
+    done: false,
+    createdAt: new Date().toISOString()
+  };
+
+  // Redirect after POST (PRG pattern)
+  res.writeHead(303, { Location: '/todos' });
+  res.end();
+}</code></pre>
+
+        <div class="tip">
+            <strong>PRG Pattern (Post/Redirect/Get):</strong> Always redirect after a successful POST. This prevents the browser from resubmitting the form if the user refreshes the page. Use HTTP 303 See Other for this.
+        </div>
+
+        <h2>The Full HTML Form</h2>
+        <p>Here's the form that sends data to our handler:</p>
+        <pre><code>&lt;!-- static/index.html --&gt;
+&lt;form action="/todos" method="POST"&gt;
+  &lt;input
+    type="text"
+    name="title"
+    placeholder="What needs to be done?"
+    required
+    maxlength="200"
+  /&gt;
+  &lt;button type="submit"&gt;Add Todo&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+        <h2>Connecting It to the Router</h2>
+        <pre><code>// router.js — add these routes
+router.add('POST', '/todos', handleCreateTodo);
+router.add('POST', '/todos/:id/delete', handleDeleteTodo);
+router.add('POST', '/todos/:id/toggle', handleToggleTodo);</code></pre>
+
+        <h2>Handling DELETE and PATCH via POST</h2>
+        <p>HTML forms only support GET and POST — not DELETE or PATCH. A common pattern is to use a hidden <code>_method</code> field to simulate other HTTP methods:</p>
+        <pre><code>&lt;!-- Delete form --&gt;
+&lt;form action="/todos/42/delete" method="POST"&gt;
+  &lt;button type="submit"&gt;Delete&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;!-- Toggle done --&gt;
+&lt;form action="/todos/42/toggle" method="POST"&gt;
+  &lt;button type="submit"&gt;Mark Done&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+
+        <h2>Accepting JSON from fetch()</h2>
+        <p>Our API should also accept JSON for JavaScript clients:</p>
+        <pre><code>// Frontend JavaScript (no frameworks)
+async function addTodo(title) {
+  const res = await fetch('/todos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ title })
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error);
+  }
+
+  return res.json();
+}</code></pre>
+
+        <h2>Input Validation</h2>
+        <p>Never trust user input. Here's a simple but effective validation helper:</p>
+        <pre><code>function validateTodo(data) {
+  const errors = [];
+
+  if (!data.title || !data.title.trim()) {
+    errors.push('Title is required');
+  }
+
+  if (data.title && data.title.length > 200) {
+    errors.push('Title must be 200 characters or less');
+  }
+
+  return errors;
+}
+
+// Usage in handler
+const errors = validateTodo({ title });
+if (errors.length > 0) {
+  res.writeHead(422, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ errors }));
+  return;
+}</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Request bodies arrive as streams — listen for <code>data</code> and <code>end</code> events</li>
+                <li>Use <code>URLSearchParams</code> to parse form data — no packages needed</li>
+                <li>Use <code>JSON.parse()</code> to parse JSON bodies from fetch() calls</li>
+                <li>Always redirect after POST (PRG pattern) — prevents duplicate submissions</li>
+                <li>Limit body size — always protect against payload flooding attacks</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-05-file-database.html" style="color:#ff6b35;">Post #5</a>, we persist todos to a JSON file — building a proper file-based database with create, read, update, and delete operations using only <code>fs.promises</code>.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share your code on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

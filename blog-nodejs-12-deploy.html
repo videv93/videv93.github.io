@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #12: Deploy to a VPS | syscraft906</title>
+    <meta name="description" content="Deploy your pure Node.js app to a VPS with systemd, nginx, and zero downtime. No Docker, no PM2 — just the OS tools you already have.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+        .complete { background: rgba(16,185,129,0.15); border: 2px solid #10b981; padding: 20px; border-radius: 4px; margin: 30px 0; text-align: center; }
+        .complete h3 { color: #10b981; font-size: 1.5em; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #12: Deploy Pure Node.js to a VPS</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 12 min read</span>
+        <span>🏷 Node.js, Linux, nginx, systemd, Deployment</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">#5: JSON Files as a Database</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">→ #12: Deploy Pure Node.js to a VPS (you are here)</a>
+    </div>
+    <article>
+        <h2>The Final Step: Getting It Live</h2>
+        <p>You've built it. Now let's ship it. In this final post we deploy our pure Node.js app to a Ubuntu VPS using systemd (to keep it running) and nginx (as a reverse proxy for HTTPS and static file serving).</p>
+
+        <div class="tip">
+            <strong>You'll need:</strong> A Ubuntu 22.04+ VPS (DigitalOcean, Linode, Hetzner, or any provider), a domain name pointed to your VPS IP, and SSH access.
+        </div>
+
+        <h2>Step 1: Server Setup</h2>
+        <pre><code># SSH into your VPS
+ssh root@your-server-ip
+
+# Update system
+apt update &amp;&amp; apt upgrade -y
+
+# Install Node.js via NodeSource (LTS)
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt install -y nodejs
+
+# Install nginx
+apt install -y nginx
+
+# Create a dedicated user (don't run Node as root!)
+useradd -m -s /bin/bash nodeapp
+mkdir -p /home/nodeapp/app
+chown nodeapp:nodeapp /home/nodeapp/app</code></pre>
+
+        <h2>Step 2: Deploy Your Code</h2>
+        <pre><code># From your local machine, copy the app
+rsync -avz --exclude 'node_modules' --exclude '.git' \
+  ./my-app/ root@your-server-ip:/home/nodeapp/app/
+
+# Or use git on the server
+ssh root@your-server-ip
+su - nodeapp
+cd /home/nodeapp/app
+git clone https://github.com/yourusername/your-app.git .
+
+# No npm install needed — zero dependencies!
+# Just verify the app runs
+node server.js
+# Ctrl+C to stop — we'll use systemd next</code></pre>
+
+        <h2>Step 3: Add Graceful Shutdown to Your Server</h2>
+        <p>Before deploying, add graceful shutdown handling so active requests complete before the server exits:</p>
+        <pre><code">// server.js — add this at the bottom
+
+// Health check endpoint for monitoring
+server.on('request', (req, res) => {
+  if (req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      status: 'ok',
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      timestamp: new Date().toISOString()
+    }));
+  }
+});
+
+// Graceful shutdown
+let isShuttingDown = false;
+
+function shutdown(signal) {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+
+  console.log(`Received ${signal}. Graceful shutdown...`);
+
+  server.close(() => {
+    console.log('All connections closed. Exiting.');
+    process.exit(0);
+  });
+
+  // Force exit after 10 seconds if connections don't close
+  setTimeout(() => {
+    console.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 10_000);
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM')); // systemd stop
+process.on('SIGINT', () => shutdown('SIGINT'));   // Ctrl+C</code></pre>
+
+        <h2>Step 4: systemd Service</h2>
+        <p>systemd keeps your app running after crashes and restarts it on server reboot:</p>
+        <pre><code"># Create the service file
+nano /etc/systemd/system/nodeapp.service</code></pre>
+
+        <pre><code>[Unit]
+Description=Pure Node.js App
+After=network.target
+
+[Service]
+Type=simple
+User=nodeapp
+WorkingDirectory=/home/nodeapp/app
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+
+# Environment variables
+Environment=NODE_ENV=production
+Environment=PORT=3000
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nodeapp
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+
+        <pre><code># Enable and start the service
+systemctl daemon-reload
+systemctl enable nodeapp
+systemctl start nodeapp
+
+# Check status
+systemctl status nodeapp
+
+# View logs live
+journalctl -u nodeapp -f</code></pre>
+
+        <h2>Step 5: nginx Reverse Proxy</h2>
+        <p>nginx sits in front of Node.js, handles HTTPS, and serves static files efficiently:</p>
+        <pre><code># /etc/nginx/sites-available/nodeapp
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com www.yourdomain.com;
+
+    # SSL certificates (from Let's Encrypt — see below)
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+
+    # Security headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # Serve static files directly (bypasses Node.js = faster)
+    location /static/ {
+        alias /home/nodeapp/app/static/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    location /uploads/ {
+        alias /home/nodeapp/app/uploads/;
+        expires 30d;
+    }
+
+    # Proxy everything else to Node.js
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade'; # for WebSockets
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}</code></pre>
+
+        <pre><code># Enable site
+ln -s /etc/nginx/sites-available/nodeapp /etc/nginx/sites-enabled/
+nginx -t  # test config
+systemctl reload nginx
+
+# Get free HTTPS cert from Let's Encrypt
+apt install -y certbot python3-certbot-nginx
+certbot --nginx -d yourdomain.com -d www.yourdomain.com</code></pre>
+
+        <h2>Step 6: Zero-Downtime Deployment</h2>
+        <pre><code># deploy.sh — run this on your local machine
+#!/bin/bash
+set -e
+
+echo "Deploying to production..."
+
+# Push code to server
+rsync -avz --exclude 'node_modules' --exclude '.git' --exclude 'data' \
+  ./ nodeapp@your-server-ip:/home/nodeapp/app/
+
+# Restart gracefully via systemd
+# systemd sends SIGTERM → our shutdown handler closes connections → exits
+ssh root@your-server-ip "systemctl restart nodeapp"
+
+# Wait and verify
+sleep 2
+curl -sf https://yourdomain.com/health | jq .
+
+echo "Deploy complete!"</code></pre>
+
+        <h2>Environment Variables</h2>
+        <pre><code>// In your app, always use process.env
+const PORT = parseInt(process.env.PORT) || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const SECRET_KEY = process.env.SECRET_KEY; // for session signing
+
+if (!SECRET_KEY) {
+  console.error('SECRET_KEY env var is required');
+  process.exit(1);
+}</code></pre>
+
+        <pre><code># Add to systemd service, or create a .env file
+# /home/nodeapp/app/.env (don't commit this to git!)
+SECRET_KEY=your-super-secret-key-here
+DATABASE_URL=...
+
+# Load in systemd:
+EnvironmentFile=/home/nodeapp/app/.env</code></pre>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li>Never run Node.js as root — create a dedicated system user</li>
+                <li>systemd's <code>Restart=on-failure</code> auto-restarts your app on crashes</li>
+                <li>Graceful shutdown: handle <code>SIGTERM</code>, finish active requests, then exit</li>
+                <li>nginx in front of Node handles HTTPS, rate limiting, and static files efficiently</li>
+                <li>Use <code>proxy_set_header Upgrade</code> for WebSocket proxying</li>
+                <li><code>/health</code> endpoint for monitoring and deployment verification</li>
+            </ul>
+        </div>
+
+        <div class="complete">
+            <h3>🎉 Series Complete!</h3>
+            <p>You've built four full web apps in pure Node.js — a <strong>Todo App</strong>, <strong>Dashboard</strong>, <strong>Real-time Chat</strong>, and <strong>Mini Store</strong> — with zero npm packages. You now understand exactly what Express, Socket.io, body-parser, multer, and express-session do under the hood. That's the foundation of a great engineer.</p>
+        </div>
+
+        <h2>What You've Learned Across All 12 Posts</h2>
+        <ul>
+            <li>HTTP server lifecycle, event loop, request/response cycle</li>
+            <li>URL routing, pattern matching, URL parameters</li>
+            <li>Serving static files with MIME types and caching headers</li>
+            <li>Parsing form data and JSON request bodies from scratch</li>
+            <li>File-based CRUD with atomic writes and UUID generation</li>
+            <li>HTML templating with XSS protection via string escaping</li>
+            <li>Vanilla JS, Fetch API, and HTML5 Canvas charts</li>
+            <li>WebSocket protocol — TCP upgrade, frame parsing, SHA-1 handshake</li>
+            <li>Real-time chat with rooms, broadcast, and client tracking</li>
+            <li>Sessions and cookies — Set-Cookie, parsing, expiry</li>
+            <li>Multipart file uploads, MIME validation, stream-based serving</li>
+            <li>Production deployment: systemd + nginx + graceful shutdown + HTTPS</li>
+        </ul>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Finished the series? Show me what you built on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>. Tag me — I'd love to see it!</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>

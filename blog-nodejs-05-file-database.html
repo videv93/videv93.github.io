@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Node.js #5: JSON Files as a Database | syscraft906</title>
+    <meta name="description" content="Use JSON files as a simple database in pure Node.js. Learn CRUD operations, atomic writes, and UUID generation without any npm packages.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%); color: #e0e0e0; line-height: 1.8; }
+        header { background: linear-gradient(135deg, #004e89 0%, #003d6b 100%); padding: 60px 20px; text-align: center; border-bottom: 3px solid #ff6b35; }
+        header h1 { font-size: 2.5em; color: #ff6b35; margin-bottom: 15px; }
+        .meta { color: #b0b0b0; font-size: 0.95em; }
+        .meta span { margin-right: 20px; }
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        article { background: rgba(0,78,137,0.1); border-left: 4px solid #ff6b35; padding: 40px; border-radius: 4px; }
+        article h2 { font-size: 1.8em; color: #f7931e; margin-top: 35px; margin-bottom: 20px; border-bottom: 2px solid #f7931e; padding-bottom: 10px; }
+        article h3 { font-size: 1.3em; color: #ff6b35; margin-top: 25px; margin-bottom: 15px; }
+        article p { margin-bottom: 15px; color: #d0d0d0; line-height: 1.9; }
+        article ul, article ol { margin-left: 25px; margin-bottom: 20px; color: #d0d0d0; }
+        article li { margin-bottom: 10px; }
+        code { background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 3px; color: #10b981; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        pre { background: #1a1a1a; border-left: 3px solid #ff6b35; padding: 20px; margin: 20px 0; overflow-x: auto; border-radius: 4px; }
+        pre code { background: none; padding: 0; color: #10b981; font-size: 0.95em; }
+        .highlight { background: rgba(16,185,129,0.1); border-left: 3px solid #10b981; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #b0b0b0; }
+        .tip { background: rgba(255,107,53,0.1); border-left: 3px solid #ff6b35; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        .warning { background: rgba(255,200,0,0.08); border-left: 3px solid #ffc800; padding: 15px 20px; margin: 20px 0; border-radius: 4px; color: #d0d0d0; }
+        footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); color: #b0b0b0; margin-top: 40px; }
+        footer a { color: #ff6b35; text-decoration: none; }
+        .series-nav { background: rgba(0,78,137,0.15); border: 1px solid rgba(255,107,53,0.3); padding: 20px; border-radius: 4px; margin: 30px 0; }
+        .series-nav h4 { color: #ff6b35; margin-bottom: 10px; }
+        .series-nav a { color: #10b981; text-decoration: none; display: block; margin: 4px 0; font-size: 0.9em; }
+        .badge { display: inline-block; background: rgba(255,107,53,0.2); color: #ff6b35; padding: 3px 10px; border-radius: 20px; font-size: 0.8em; margin-bottom: 15px; border: 1px solid rgba(255,107,53,0.4); }
+    </style>
+</head>
+<body>
+<header>
+    <div class="badge">Series: Pure Node.js — Zero Dependencies</div>
+    <h1>Post #5: JSON Files as a Database</h1>
+    <div class="meta">
+        <span>📅 March 2026</span>
+        <span>⏱ 9 min read</span>
+        <span>🏷 Node.js, fs, CRUD, JSON</span>
+    </div>
+</header>
+<div class="container">
+    <div class="series-nav">
+        <h4>📚 Pure Node.js Series — Zero Dependencies</h4>
+        <a href="/blog-nodejs-01-http-server.html">#1: Build an HTTP Server From Scratch</a>
+        <a href="/blog-nodejs-02-routing.html">#2: Manual Routing — No Express Needed</a>
+        <a href="/blog-nodejs-03-static-files.html">#3: Serving Static Files (HTML, CSS, JS)</a>
+        <a href="/blog-nodejs-04-forms-post.html">#4: Handling Forms &amp; POST Requests</a>
+        <a href="/blog-nodejs-05-file-database.html">→ #5: JSON Files as a Database (you are here)</a>
+        <a href="/blog-nodejs-06-templating.html">#6: HTML Templating with String Interpolation</a>
+        <a href="/blog-nodejs-07-vanilla-ui.html">#7: Vanilla JS Charts &amp; Dynamic UI</a>
+        <a href="/blog-nodejs-08-websockets.html">#8: WebSockets From Scratch</a>
+        <a href="/blog-nodejs-09-chat-rooms.html">#9: Chat Rooms &amp; Broadcast Messages</a>
+        <a href="/blog-nodejs-10-sessions-cookies.html">#10: Sessions &amp; Cookies Without Packages</a>
+        <a href="/blog-nodejs-11-file-uploads.html">#11: File Uploads &amp; Image Serving</a>
+        <a href="/blog-nodejs-12-deploy.html">#12: Deploy Pure Node.js to a VPS</a>
+    </div>
+    <article>
+        <h2>Why JSON Files?</h2>
+        <p>For small apps and prototypes, a JSON file is a perfectly valid database. It's human-readable, no setup needed, and Node.js can read and write it natively. In this post we build a complete CRUD layer for our Todo app — no SQLite, no MongoDB, just <code>fs.promises</code> and plain JSON.</p>
+
+        <h2>Setting Up the Data Layer</h2>
+        <pre><code>// db/todos.js
+const fs = require('fs').promises;
+const path = require('path');
+const crypto = require('crypto');
+
+const DB_PATH = path.join(__dirname, '../data/todos.json');
+
+// Ensure the data directory and file exist
+async function ensureDb() {
+  try {
+    await fs.access(DB_PATH);
+  } catch {
+    await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
+    await fs.writeFile(DB_PATH, JSON.stringify([]));
+  }
+}
+
+// Read all todos
+async function readAll() {
+  await ensureDb();
+  const raw = await fs.readFile(DB_PATH, 'utf8');
+  return JSON.parse(raw);
+}
+
+// Write atomically — write to temp file first, then rename
+async function writeAll(todos) {
+  const tmp = DB_PATH + '.tmp';
+  await fs.writeFile(tmp, JSON.stringify(todos, null, 2));
+  await fs.rename(tmp, DB_PATH);
+}
+
+module.exports = { readAll, writeAll };</code></pre>
+
+        <div class="tip">
+            <strong>Why write to a temp file first?</strong> If the process crashes mid-write, you'd corrupt your database file. Writing to a <code>.tmp</code> file and then renaming is an atomic operation on most filesystems — the rename either fully happens or it doesn't.
+        </div>
+
+        <h2>UUID Without the <code>uuid</code> Package</h2>
+        <p>Node.js v14.17+ ships with <code>crypto.randomUUID()</code> — a standards-compliant UUID v4 generator. No package needed:</p>
+        <pre><code>const { randomUUID } = require('crypto');
+
+const id = randomUUID();
+// → 'b9d1a654-8f3e-4c12-a7f0-3d9e12345678'</code></pre>
+
+        <h2>Full CRUD Operations</h2>
+        <pre><code>// db/todos.js (continued)
+
+// CREATE
+async function create(title) {
+  const todos = await readAll();
+  const todo = {
+    id: randomUUID(),
+    title: title.trim(),
+    done: false,
+    createdAt: new Date().toISOString()
+  };
+  todos.push(todo);
+  await writeAll(todos);
+  return todo;
+}
+
+// READ ONE
+async function findById(id) {
+  const todos = await readAll();
+  return todos.find(t => t.id === id) || null;
+}
+
+// UPDATE
+async function update(id, changes) {
+  const todos = await readAll();
+  const index = todos.findIndex(t => t.id === id);
+  if (index === -1) return null;
+
+  todos[index] = { ...todos[index], ...changes, updatedAt: new Date().toISOString() };
+  await writeAll(todos);
+  return todos[index];
+}
+
+// DELETE
+async function remove(id) {
+  const todos = await readAll();
+  const filtered = todos.filter(t => t.id !== id);
+  if (filtered.length === todos.length) return false; // not found
+  await writeAll(filtered);
+  return true;
+}
+
+// TOGGLE done status
+async function toggle(id) {
+  const todo = await findById(id);
+  if (!todo) return null;
+  return update(id, { done: !todo.done });
+}
+
+module.exports = { readAll, create, findById, update, remove, toggle };</code></pre>
+
+        <h2>Wiring CRUD Into Route Handlers</h2>
+        <pre><code>// handlers/todos.js
+const db = require('../db/todos');
+
+async function handleListTodos(req, res) {
+  const todos = await db.readAll();
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ todos, count: todos.length }));
+}
+
+async function handleCreateTodo(req, res) {
+  // body parsing from Post #4
+  const body = await readBody(req);
+  const params = new URLSearchParams(body);
+  const title = params.get('title');
+
+  if (!title?.trim()) {
+    res.writeHead(422, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Title required' }));
+    return;
+  }
+
+  await db.create(title);
+  res.writeHead(303, { Location: '/todos' });
+  res.end();
+}
+
+async function handleToggleTodo(req, res, params) {
+  const todo = await db.toggle(params.id);
+  if (!todo) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found' }));
+    return;
+  }
+  res.writeHead(303, { Location: '/todos' });
+  res.end();
+}
+
+async function handleDeleteTodo(req, res, params) {
+  const deleted = await db.remove(params.id);
+  if (!deleted) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found' }));
+    return;
+  }
+  res.writeHead(303, { Location: '/todos' });
+  res.end();
+}</code></pre>
+
+        <h2>The Data File</h2>
+        <p>After adding a few todos, <code>data/todos.json</code> looks like this:</p>
+        <pre><code>[
+  {
+    "id": "b9d1a654-8f3e-4c12-a7f0-3d9e12345678",
+    "title": "Buy milk",
+    "done": false,
+    "createdAt": "2026-03-20T10:00:00.000Z"
+  },
+  {
+    "id": "c2e4f789-1a2b-3c4d-5e6f-7a8b9c0d1e2f",
+    "title": "Learn pure Node.js",
+    "done": true,
+    "createdAt": "2026-03-20T09:00:00.000Z",
+    "updatedAt": "2026-03-20T10:05:00.000Z"
+  }
+]</code></pre>
+
+        <div class="warning">
+            <strong>When NOT to use this approach:</strong> JSON file databases are great for prototypes and single-instance apps. They don't support concurrent writes safely, have no query language, and don't scale past a few thousand records. For production use SQLite (built into Node.js v22+ via <code>node:sqlite</code>) or a proper database.
+        </div>
+
+        <div class="highlight">
+            <strong>Key takeaways:</strong>
+            <ul style="margin-top:10px; margin-left:15px;">
+                <li><code>fs.promises.readFile/writeFile</code> — async file I/O, no callbacks needed</li>
+                <li>Write to <code>.tmp</code> then <code>rename</code> for atomic writes</li>
+                <li><code>crypto.randomUUID()</code> — UUID v4 built into Node.js, no package needed</li>
+                <li>Wrap all file ops in try/catch — file I/O can fail</li>
+                <li>JSON files are great for prototypes; use SQLite or Postgres in production</li>
+            </ul>
+        </div>
+
+        <h2>What's Next</h2>
+        <p>In <a href="/blog-nodejs-06-templating.html" style="color:#ff6b35;">Post #6</a>, we start Module 2 — building a Dashboard app. We'll create a mini HTML templating engine using pure string interpolation to render our todo data as proper HTML pages.</p>
+
+        <div style="margin-top:40px; padding-top:30px; border-top:1px solid rgba(255,107,53,0.2); color:#b0b0b0;">
+            <p>Building along? Share on <a href="https://x.com/syscraft906" style="color:#ff6b35;">X/Twitter</a> or <a href="https://github.com/syscraft906" style="color:#ff6b35;">GitHub</a>.</p>
+        </div>
+    </article>
+</div>
+<footer>
+    <p>Pure Node.js Series | syscraft906 | Building in public</p>
+    <p><a href="/">Home</a> | <a href="/blog.html">Blog</a> | <a href="https://github.com/syscraft906">GitHub</a> | <a href="https://x.com/syscraft906">Twitter</a></p>
+</footer>
+</body>
+</html>
