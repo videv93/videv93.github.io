@@ -29,5 +29,4 @@ Vườn ghi chú của [Vi Tran](/). 924 ghi chú, viết bằng tiếng Việt,
 ## Khác
 
 - [[projects|Projects]] — những thứ đang xây
-- [Blog](/blog.html) — bài viết dài, đã biên tập
 - [CV](/) — kinh nghiệm chuyên môn

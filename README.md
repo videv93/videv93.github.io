@@ -1,16 +1,17 @@
 # videv93.github.io
 
-CV, blog, and a knowledge garden of ~900 notes synced from an Obsidian vault.
+CV plus a knowledge garden of ~900 notes synced from an Obsidian vault.
 
 | Path | What it is | Authored in |
 | --- | --- | --- |
 | `/` | CV homepage | `index.html`, hand-written |
-| `/blog.html`, `/blog-*.html` | Long-form posts | hand-written HTML |
-| `/professional-experience.html`, `/audit.html` | Detail pages | hand-written HTML |
 | `/notes/` | Knowledge garden | Obsidian vault, rendered by [Quartz](https://quartz.jzhao.xyz) |
 
-The hand-written pages are standalone HTML with inline CSS and stay that way.
-Quartz only owns `/notes/`.
+`index.html` is standalone HTML with inline CSS and stays that way. Quartz only
+owns `/notes/`.
+
+The blog, professional-experience and audit pages were removed; they remain in
+git history if they are ever wanted back.
 
 ## Publishing
 

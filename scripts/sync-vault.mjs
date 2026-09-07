@@ -193,7 +193,6 @@ ${list}
 ## Khác
 
 - [[projects|Projects]] — những thứ đang xây
-- [Blog](/blog.html) — bài viết dài, đã biên tập
 - [CV](/) — kinh nghiệm chuyên môn
 `,
   )
