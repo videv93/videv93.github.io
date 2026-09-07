@@ -96,10 +96,11 @@
     .duel-card input:focus, .duel-card textarea:focus { outline: 0; border-color: #1a0dab; }
     .duel-card textarea { resize: vertical; min-height: 40pt; }
     .duel-card .duel-actions { margin-top: 9pt; display: flex; gap: 8pt; align-items: center; }
-    .duel-card button.duel-send {
+    .duel-card .duel-send {
       font-family: inherit; font-size: 10pt; cursor: pointer;
       padding: 5pt 11pt; border: 0.8pt solid #1a0dab; border-radius: 3px;
       background: #1a0dab; color: #fff;
+      text-decoration: none; display: inline-block;
     }
     .duel-card button.duel-send[disabled] { opacity: 0.55; cursor: default; }
     .duel-card .duel-arena { font-size: 9.5pt; }
@@ -345,6 +346,18 @@
   <div class="duel-status" id="duel-status" role="status"></div>
 </div>
 
+<!-- Consolation card: closing the duel invitation offers the notes garden
+     instead, so a "no" still leads somewhere. -->
+<div class="duel-card" id="notes-card" role="dialog" aria-labelledby="notes-title" hidden>
+  <button class="duel-close" id="notes-close" aria-label="Close">&times;</button>
+  <h3 id="notes-title">No duel? Have a read instead.</h3>
+  <p>I keep a public notes garden &mdash; 990+ notes on backend, distributed
+     systems, algorithms, security and more, written as I learn.</p>
+  <div class="duel-actions">
+    <a class="duel-send" id="notes-go" href="/notes/">Browse the notes &rarr;</a>
+  </div>
+</div>
+
 <script>
 (function () {
   var API = "https://185.209.230.240.sslip.io/api/challenge";
@@ -352,6 +365,7 @@
   var KEY = "duel-popup-dismissed";
 
   var card = document.getElementById("duel-card");
+  var notes = document.getElementById("notes-card");
   var launcher = document.getElementById("duel-launcher");
   var form = document.getElementById("duel-form");
   var status = document.getElementById("duel-status");
@@ -362,31 +376,57 @@
   function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
+  var NOTES_KEY = "duel-notes-dismissed";
+  var MONTH = 30 * 24 * 60 * 60 * 1000;
+
+  function fresh(k) { return Date.now() - Number(get(k) || 0) < MONTH; }
+
   function openCard() {
     card.hidden = false;
+    notes.hidden = true;
     launcher.hidden = true;
     document.getElementById("duel-name").focus();
   }
+
+  /* Closing the duel invitation is not the end of the conversation: offer the
+     notes garden once, then fall back to the launcher pill. */
   function closeCard(remember) {
     card.hidden = true;
-    launcher.hidden = false;
     if (remember) set(KEY, String(Date.now()));
+    if (!fresh(NOTES_KEY)) {
+      notes.hidden = false;
+      launcher.hidden = true;
+    } else {
+      launcher.hidden = false;
+    }
+  }
+
+  function closeNotes() {
+    notes.hidden = true;
+    launcher.hidden = false;
+    set(NOTES_KEY, String(Date.now()));
   }
 
   document.getElementById("duel-close").addEventListener("click", function () { closeCard(true); });
+  document.getElementById("notes-close").addEventListener("click", closeNotes);
+  // Following the link is a yes, not a dismissal — but don't re-offer it either.
+  document.getElementById("notes-go").addEventListener("click", function () {
+    set(NOTES_KEY, String(Date.now()));
+  });
   launcher.addEventListener("click", function () { openCard(); });
   document.getElementById("duel-nav").addEventListener("click", function (e) {
     e.preventDefault();
     openCard();
   });
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && !card.hidden) closeCard(true);
+    if (e.key !== "Escape") return;
+    if (!card.hidden) closeCard(true);
+    else if (!notes.hidden) closeNotes();
   });
 
   // Dismissals last 30 days: long enough not to nag, short enough that a
   // returning visitor sees the invitation again.
-  var dismissed = Number(get(KEY) || 0);
-  if (Date.now() - dismissed < 30 * 24 * 60 * 60 * 1000) {
+  if (fresh(KEY)) {
     launcher.hidden = false;
   } else {
     setTimeout(function () { if (card.hidden && launcher.hidden) openCard(); }, 6000);
