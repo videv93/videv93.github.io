@@ -2,7 +2,7 @@
 title: Notes
 ---
 
-Vườn ghi chú của [Vi Tran](/). 924 ghi chú, viết bằng tiếng Việt, **giữ nguyên thuật ngữ tiếng Anh** — vì mọi sách và mọi bài giảng đều dùng tiếng Anh.
+Vườn ghi chú của [Vi Tran](/). 992 ghi chú, viết bằng tiếng Việt, **giữ nguyên thuật ngữ tiếng Anh** — vì mọi sách và mọi bài giảng đều dùng tiếng Anh.
 
 Đây không phải blog. Ghi chú ở đây được sửa liên tục, và `status` trong mỗi trang cho biết nó đã chín tới đâu: `seed` (mới gieo) → `growing` (đang mở rộng) → `evergreen` (đã hệ thống hoá).
 
