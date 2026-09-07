@@ -18,35 +18,41 @@ const config: QuartzConfig = {
     ignorePatterns: ["private", "templates", ".obsidian", "_archive-seed"],
     defaultDateType: "modified",
     theme: {
-      fontOrigin: "googleFonts",
+      // Local fonts only: the garden matches the CV, which is set in the serif
+      // every system already has, so the page fetches nothing at runtime.
+      // The names below are Tinos, which is metrically identical to Times New
+      // Roman and — unlike Times — actually exists on Google Fonts, which is
+      // where the OG-image generator fetches from at build time. The browser
+      // never uses it: custom.scss puts real Times New Roman ahead of it.
+      fontOrigin: "local",
       cdnCaching: true,
       typography: {
-        header: "Schibsted Grotesk",
-        body: "Source Sans Pro",
-        code: "IBM Plex Mono",
+        header: "Tinos",
+        body: "Tinos",
+        code: "Cousine",
       },
       colors: {
         lightMode: {
-          light: "#faf8f8",
-          lightgray: "#e5e5e5",
-          gray: "#b8b8b8",
-          darkgray: "#4e4e4e",
-          dark: "#2b2b2b",
-          secondary: "#004e89",
-          tertiary: "#ff6b35",
-          highlight: "rgba(255, 107, 53, 0.12)",
-          textHighlight: "#ff6b3555",
+          light: "#ffffff",
+          lightgray: "#d8d8d8",
+          gray: "#8a8a8a",
+          darkgray: "#000000",
+          dark: "#000000",
+          secondary: "#1a0dab",
+          tertiary: "#1a0dab",
+          highlight: "rgba(26, 13, 171, 0.07)",
+          textHighlight: "#1a0dab22",
         },
         darkMode: {
-          light: "#1a1a1a",
-          lightgray: "#393639",
+          light: "#111111",
+          lightgray: "#333333",
           gray: "#8a8a8a",
-          darkgray: "#c9c9c9",
-          dark: "#e0e0e0",
-          secondary: "#ff6b35",
-          tertiary: "#ff9a6b",
-          highlight: "rgba(255, 107, 53, 0.12)",
-          textHighlight: "#ff6b3555",
+          darkgray: "#e8e8e8",
+          dark: "#f5f5f5",
+          secondary: "#8ab4f8",
+          tertiary: "#8ab4f8",
+          highlight: "rgba(138, 180, 248, 0.10)",
+          textHighlight: "#8ab4f833",
         },
       },
     },

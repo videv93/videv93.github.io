@@ -1,3 +1,193 @@
 @use "./base.scss";
 
-// put your custom CSS here!
+// Match the CV at /. That page is a print document — A4, Times New Roman,
+// 10.2pt body, 12pt rules under each section head — and the garden should read
+// as the same document, not as a separate site.
+//
+// Metrics are lifted from index.html verbatim, with one deliberate exception,
+// noted at `p` below.
+
+// Quartz builds its own `:root` block from quartz.config.ts and emits it AFTER
+// this file, so a plain `:root` here loses the cascade and the config's font
+// name wins — which is Tinos, a Google font nobody has installed, landing on
+// the sans-serif fallback. `html:root` (0,1,1) outranks `:root` (0,1,0), so it
+// wins on specificity no matter what order the two blocks are emitted in.
+//
+// Overriding the variables rather than the rules covers every consumer at once:
+// base.scss, the explorer, search, popovers and mermaid all read them.
+html:root {
+  --bodyFont: "Times New Roman", Times, Tinos, serif;
+  --headerFont: "Times New Roman", Times, Tinos, serif;
+  --titleFont: "Times New Roman", Times, Tinos, serif;
+  --codeFont: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-size: 10.2pt;
+  color: var(--dark);
+}
+
+// The CV sets line-height: 16.32px (~1.2). That is right for a one-page
+// document scanned in a column, and wrong for 900 notes read end to end, so
+// body copy gets normal leading while every other metric is held exact.
+p,
+li,
+dd,
+blockquote,
+table {
+  line-height: 1.5;
+}
+
+a {
+  color: var(--secondary);
+  font-weight: inherit;
+
+  &.internal {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  &.external .external-icon {
+    display: none;
+  }
+}
+
+// h1 is the CV's name line; h2 is a section head with its hairline rule.
+// h3 and below step down from there rather than from Quartz's own scale.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--headerFont);
+  font-weight: bold;
+  color: var(--dark);
+}
+
+h1 {
+  font-size: 26pt;
+  line-height: 28.8pt;
+  letter-spacing: 0.5pt;
+  margin: 0 0 0.6rem;
+}
+
+h2 {
+  font-size: 12pt;
+  line-height: 13.3pt;
+  margin: 1.6rem 0 0.5rem;
+  padding-bottom: 2pt;
+  border-bottom: 0.6pt solid var(--dark);
+}
+
+h3 {
+  font-size: 11pt;
+  margin: 1.2rem 0 0.4rem;
+}
+
+h4,
+h5,
+h6 {
+  font-size: 10.2pt;
+  margin: 1rem 0 0.35rem;
+}
+
+// The page title in the sidebar is the masthead — the CV's name line, scaled
+// to fit the column.
+.page-title {
+  font-size: 18pt;
+  letter-spacing: 0.5pt;
+  font-weight: bold;
+}
+
+// Plain paper: no cards, no tinted panels, no rounded corners.
+blockquote {
+  border-left: 2px solid var(--dark);
+  margin-left: 0;
+  padding-left: 1rem;
+  font-style: italic;
+}
+
+.callout {
+  border-radius: 0;
+  border: 0;
+  border-left: 2px solid var(--gray);
+  background-color: transparent;
+  padding-left: 1rem;
+
+  & .callout-title {
+    font-weight: bold;
+  }
+}
+
+table {
+  font-size: 10.2pt;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 0;
+  border-bottom: 0.6pt solid var(--lightgray);
+  padding: 0.3rem 0.6rem 0.3rem 0;
+  text-align: left;
+}
+
+thead th {
+  border-bottom: 0.6pt solid var(--dark);
+}
+
+code,
+pre {
+  font-size: 9pt;
+}
+
+code {
+  background-color: transparent;
+  border: 0.6pt solid var(--lightgray);
+  border-radius: 0;
+  padding: 0 0.2rem;
+}
+
+figure[data-rehype-pretty-code-figure] pre {
+  border: 0.6pt solid var(--lightgray);
+  border-radius: 0;
+}
+
+// Sidebar, breadcrumbs and footer are apparatus, not the document — hold them
+// at the CV's small-print size (its .contact line is 9.5pt).
+.breadcrumb-container,
+.content-meta,
+.tag-link,
+footer,
+.explorer,
+.toc,
+.backlinks,
+.graph > h3 {
+  font-size: 9.5pt;
+}
+
+.tag-link {
+  border-radius: 0;
+  background-color: transparent;
+  border: 0.6pt solid var(--lightgray);
+  padding: 0 0.3rem;
+
+  &::before {
+    content: "#";
+  }
+}
+
+// The search field is the one control the reader types into; keep it legible.
+#search-container .search-space input {
+  font-family: var(--bodyFont);
+  font-size: 10.2pt;
+  border-radius: 0;
+}
