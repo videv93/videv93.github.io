@@ -1,205 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>syscraft906 | Trading Algorithms & SaaS</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-            color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .avatar {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 30px;
-            background: linear-gradient(135deg, #ff6b35 0%, #004e89 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 8px;
-            color: #ff6b35;
-            font-weight: 700;
-        }
-
-        .tagline {
-            font-size: 1em;
-            color: #b0b0b0;
-            margin-bottom: 30px;
-            font-weight: 300;
-        }
-
-        .bio {
-            background: rgba(255, 107, 53, 0.1);
-            border-left: 3px solid #ff6b35;
-            padding: 15px 20px;
-            margin-bottom: 40px;
-            border-radius: 4px;
-            font-size: 0.95em;
-            line-height: 1.6;
-            color: #d0d0d0;
-        }
-
-        .links {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .link {
-            display: block;
-            padding: 16px;
-            background: rgba(255, 107, 53, 0.1);
-            border: 2px solid #004e89;
-            border-radius: 8px;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .link:hover {
-            background: #ff6b35;
-            border-color: #ff6b35;
-            color: #1a1a1a;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
-        }
-
-        .link-icon {
-            margin-right: 10px;
-            font-size: 1.2em;
-        }
-
-        .section-title {
-            font-size: 0.85em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #f7931e;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        footer {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 107, 53, 0.2);
-            font-size: 0.85em;
-            color: #808080;
-        }
-
-        footer a {
-            color: #ff6b35;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            .avatar {
-                width: 100px;
-                height: 100px;
-                font-size: 50px;
-            }
-
-            .link {
-                padding: 14px;
-                font-size: 0.95em;
-            }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vi Tran - Senior Full Stack Developer</title>
+<style>
+  @page { size: A4; margin: 0; }
+  html { font-size: 16px; }
+  body {
+    margin: 0;
+    padding: 24.65pt 25.5pt 30pt 25.5pt;
+    font-family: "Times New Roman", Times, serif;
+    font-size: 10.2pt;
+    line-height: 16.32px;
+    color: #000;
+  }
+  a { color: #1a0dab; }
+  h1 {
+    font-size: 26pt;
+    line-height: 28.8pt;
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+    letter-spacing: 0.5pt;
+  }
+  .contact { text-align: center; font-size: 9.5pt; margin: 6.1pt 0 0 0; }
+  h2 {
+    font-size: 12pt;
+    line-height: 13.3pt;
+    font-weight: bold;
+    margin: 8.7pt 0 0 0;
+    padding-bottom: 2pt;
+    border-bottom: 0.6pt solid #000;
+  }
+  h2.first { margin-top: 10.95pt; }
+  .summary { margin: 5.6pt 0 0 0; text-align: left; }
+  ul { margin: 3.2pt 0 0 0; padding-left: 10.63pt; list-style: none; }
+  li { margin-top: 1.5pt; text-indent: -6.13pt; }
+  li:before { content: "\2022"; padding-right: 2.56pt; }
+  ul.tight li { margin-top: 0.8pt; }
+  .job { margin-top: 9.2pt; }
+  h2 { break-after: avoid-page; }
+  .job-head { break-after: avoid-page; break-inside: avoid; }
+  li { break-inside: avoid; }
+  ul > li:first-child { break-before: avoid; }
+  .job-head { display: flex; justify-content: space-between; font-weight: bold; }
+  .job-head .role { font-weight: bold; font-style: italic; }
+  .sep { font-weight: normal; padding: 0 3pt; }
+  .company { font-weight: bold; }
+  .company a { color: #000; text-decoration: underline; }
+  .dates { font-weight: bold; white-space: nowrap; padding-left: 12pt; }
+  .links-empty { height: 18pt; }
+  .edu { margin-top: 8pt; }
+  .certs { font-weight: bold; margin-top: 9pt; }
+  @media screen {
+    body { max-width: 760pt; margin: 0 auto; }
+    .site-nav { font-size: 9.5pt; margin: 0 0 10pt 0; padding-bottom: 6pt; border-bottom: 0.6pt solid #ccc; }
+    .site-nav a { margin-right: 10pt; }
+  }
+  @media print { .site-nav { display: none; } }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="avatar">🦊</div>
 
-        <h1>syscraft906</h1>
-        <p class="tagline">Building trading algorithms & SaaS</p>
+<div class="site-nav"><a href="/professional-experience.html">Professional experience</a><a href="/blog.html">Blog</a><a href="/audit.html">Audit</a><a href="https://github.com/syscraft906">GitHub</a><a href="Vi_Tran_-_Senior_Full_Stack_Developer.pdf">Download PDF</a></div>
 
-        <div class="bio">
-            Shipping code. Building in public. Trading algorithms, SaaS products, and systems that scale.
-        </div>
+<h1>VI TRAN</h1>
+<div class="contact">Ho Chi Minh, Vietnam&nbsp; |&nbsp; +84-334-331-483&nbsp; |&nbsp; <a href="mailto:videv93@gmail.com">videv93@gmail.com</a>&nbsp; |&nbsp; <a href="https://www.linkedin.com/in/videv93/">LinkedIn</a>&nbsp; |&nbsp; <a href="https://github.com/videv93">Github</a>&nbsp; |&nbsp; <a href="https://videv93.github.io/">Portfolio</a></div>
 
-        <div class="links">
-            <div class="section-title">Main</div>
-            <a href="https://syscraft906.dev" class="link"><span class="link-icon">🌐</span> Portfolio</a>
-            <a href="https://github.com/syscraft906" class="link"><span class="link-icon">💻</span> GitHub</a>
-        </div>
+<h2 class="first">DETAILS</h2>
+<p class="summary">I am a versatile Full Stack Developer with over 8 years of experience in the <b>JavaScript</b> ecosystem, specializing in <b>React</b>, <b>Node.js</b>, and <b>TypeScript</b>. My background includes developing scalable web applications and creating <b>RESTful APIs</b> that facilitate seamless integration with various applications. I have strong expertise in both frontend and backend development, with proficiency in database management using <b>MongoDB</b> and <b>PostgreSQL</b>. I have successfully implemented responsive designs and <b>CI/CD</b> pipelines to enhance application performance and reduce deployment times. I am passionate about collaborating with cross-functional teams to deliver high-quality, user-friendly solutions that drive business success.</p>
 
-        <div class="links">
-            <div class="section-title">Social</div>
-            <a href="https://youtube.com/@syscraft906" class="link"><span class="link-icon">📺</span> YouTube</a>
-            <a href="https://x.com/syscraft906" class="link"><span class="link-icon">𝕏</span> X / Twitter</a>
-        </div>
+<h2>LINKS</h2>
+<div class="links-empty"></div>
 
-        <div class="links">
-            <div class="section-title">Projects</div>
-            <a href="https://github.com/syscraft906/kitkat-001" class="link"><span class="link-icon">🤖</span> KitKatExchange</a>
-            <a href="https://github.com/syscraft906/KitKat-strategies" class="link"><span class="link-icon">📊</span> Trading Algorithms</a>
-            <a href="https://github.com/syscraft906/book-circle" class="link"><span class="link-icon">📚</span> BookCircle</a>
-            <a href="https://github.com/syscraft906/knowledge-base" class="link"><span class="link-icon">🧠</span> Knowledge Base</a>
-        </div>
+<h2>SKILLS</h2>
+<ul class="tight">
+  <li>Node.js, React.js, JavaScript, TypeScript, Python, PostgreSQL, MongoDB, Airflow, REST APIs, dbt, Blockchain, AWS, Docker, Kubernetes, CI/CD</li>
+</ul>
 
-        <div class="links">
-            <div class="section-title">Datasets</div>
-            <a href="https://gist.github.com/videv93" class="link"><span class="link-icon">📈</span> Public Datasets</a>
-        </div>
+<h2>LANGUAGES</h2>
+<ul class="tight">
+  <li>Vietnamese</li>
+  <li>English</li>
+</ul>
 
-        <div class="links">
-            <div class="section-title">Security</div>
-            <a href="/audit.html" class="link"><span class="link-icon">🔐</span> Audit Portfolio</a>
-        </div>
+<h2>EXPERIENCE HISTORY</h2>
 
-        <div class="links">
-            <div class="section-title">Content</div>
-            <a href="/blog.html" class="link"><span class="link-icon">📝</span> Blog</a>
-            <a href="/professional-experience.html" class="link"><span class="link-icon">💼</span> Experience</a>
-        </div>
+<div class="job">
+  <div class="job-head">
+    <div><span class="company"><a href="https://citics.vn/">Citics</a></span><span class="sep">|</span><span class="role">Senior Full Stack Developer</span></div>
+    <div class="dates">Jan 2025 - Present</div>
+  </div>
+  <ul>
+    <li>Own the <b>real estate data warehouse</b> frontend end to end &mdash; <b>Next.js 16</b> (<b>App Router</b>, <b>React Server Components</b>, <b>Turbopack</b>), <b>React 19</b>, <b>TypeScript 5</b>, <b>Tailwind CSS 4</b> and <b>shadcn/ui</b> (<b>Radix</b>) &mdash; spanning 27 domain feature modules covering estates, apartments, projects, verification workflows, pricing maps and compared-asset valuation</li>
+    <li>Built the <b>multi-tenant gateway API</b> in an <b>Nx monorepo</b>: <b>NestJS 11</b>, <b>Prisma 7</b> over <b>PostgreSQL 16</b> with <b>row-level security</b> via session-scoped tenant context, <b>Keycloak</b> (<b>OAuth2 / OIDC</b>) authentication with <b>JWKS</b>-verified <b>JWT</b>, and <b>Opossum circuit breakers</b> plus <b>Kubernetes</b> liveness/readiness probes for upstream resilience</li>
+    <li>Maintain and extend the <b>Ruby on Rails</b> core platform: versioned <b>JSON:API</b> endpoints (v1&ndash;v4), 190+ <b>Sidekiq</b> jobs across prioritized queues, <b>Solr/Sunspot</b> search including cross-document join queries that avoid reindexing 30M+ records, <b>AASM</b> state machines, <b>PaperTrail</b> audit snapshots and <b>Pundit</b> authorization</li>
+    <li>Delivered <b>geospatial</b> features across the stack &mdash; <b>Google Maps API</b> with custom <b>vector tiles</b>, <b>PostGIS</b> cadastral data, <b>proj4</b> coordinate transformation (<b>VN2000</b> to <b>WGS84</b>), multi-zoom price-map tile generation, and a marker clustering and label-collision algorithm for dense price overlays</li>
+    <li>Shipped <b>in-browser OCR</b> for land-title certificates using <b>PaddleOCR v5</b> through <b>ONNX Runtime Web</b> (<b>WASM/WebGPU</b>), lazily loading the model client-side to extract VN2000 coordinates with no server round-trip</li>
+    <li>Generated <b>type-safe API clients</b> from <b>OpenAPI/Swagger</b> specs (<b>openapi-fetch</b>, <b>openapi-react-query</b>) across four API versions, and built complex forms and data views with <b>React Hook Form</b>, <b>Zod</b>, <b>TanStack Query/Table</b>, <b>Zustand</b>, <b>nuqs</b> URL state and <b>dnd-kit</b> drag-and-drop uploads</li>
+    <li>Established <b>observability and CI/CD</b>: <b>OpenTelemetry</b> tracing, <b>Fluentd</b> log forwarding to <b>Elasticsearch/Kibana</b> with <b>ElastAlert</b>, <b>Sentry</b> error monitoring and <b>PostHog</b> analytics, on branch-scoped <b>GitLab CI</b> pipelines (staging/UAT/production) with multi-stage <b>Docker</b> builds and <b>nx affected</b> task graphs</li>
+    <li>Built a <b>multi-tenant billing and analytics dashboard</b> with per-endpoint usage breakdown, multi-sheet Excel export, query-history audit trail and <b>role-based access control</b> (Admin / Viewer / Finance)</li>
+    <li>Drive AI-assisted delivery with <b>Claude Code</b> and the <a href="https://github.com/bmad-code-org/bmad-method">BMAD Method</a> for spec-driven development, designing UI/UX in <b>Google Stitch</b> and <b>OpenDesign</b>, backed by a layered test suite &mdash; <b>Vitest</b> and <b>Testing Library</b>, <b>Playwright</b> e2e on a <a href="https://bmad-code-org.github.io/bmad-method-test-architecture-enterprise/explanation/step-file-architecture/">step-file test architecture</a> with persisted auth sessions, <b>MSW</b> mocking and <b>RSpec</b></li>
+  </ul>
+</div>
 
-        <footer>
-            <p>Crafting systems, shipping code 🚀</p>
-            <p style="margin-top: 10px;">Built with ❤️ | <a href="https://github.com/syscraft906/syscraft906.github.io">View Source</a></p>
-        </footer>
-    </div>
+<div class="job">
+  <div class="job-head">
+    <div><span class="company"><a href="https://www.heycounsel.com/">Heycounsel</a>, <a href="https://devbase.us/">Devbase</a></span><span class="sep">|</span><span class="role">Senior Full Stack Developer</span></div>
+    <div class="dates">Oct 2024 - Dec 2024</div>
+  </div>
+  <ul>
+    <li>Architected modern web applications using <b>Next.js 14</b>, leveraging <b>Server Components</b> and <b>App Router</b> to enhance performance and user experience</li>
+    <li>Designed scalable frontends with <b>server-side</b> and <b>client-side rendering</b> strategies, implementing efficient data fetching patterns to improve load times and user engagement</li>
+    <li>Implemented enterprise-level authentication and authorization using <b>Supabase Auth</b> with custom policies, enhancing security and compliance</li>
+    <li>Optimized database performance through <b>Supabase</b>'s <b>PostgreSQL extensions</b> and <b>Edge Functions</b>, resulting in faster query execution and improved application responsiveness</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company">Paramount, <a href="https://devbase.us/">Devbase</a></span><span class="sep">|</span><span class="role">Senior Full Stack Developer</span></div>
+    <div class="dates">Aug 2024 - Oct 2024</div>
+  </div>
+  <ul>
+    <li>Architected modern web applications using <b>Next.js 14</b>, leveraging <b>Server Components</b> and <b>App Router</b> to enhance performance and user experience</li>
+    <li>Designed scalable frontends with <b>server-side</b> and <b>client-side rendering</b> strategies, implementing efficient data fetching patterns to improve application speed and reliability</li>
+    <li>Implemented enterprise-level authentication and authorization using <b>Supabase Auth</b> with custom policies, enhancing security and compliance</li>
+    <li>Optimized database performance through <b>Supabase</b>'s <b>PostgreSQL extensions</b> and <b>Edge Functions</b>, resulting in faster query execution and improved application responsiveness</li>
+    <li>Led development teams in adopting type-safe practices with <b>TypeScript</b> across the full stack, increasing code reliability and reducing runtime errors</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company"><a href="https://supplyhive.com/">SupplyHive</a>, <a href="https://devbase.us/">Devbase</a></span><span class="sep">|</span><span class="role">Senior Full Stack Developer</span></div>
+    <div class="dates">Dec 2022 - Aug 2024</div>
+  </div>
+  <ul>
+    <li>Architected production-grade applications using <b>React.js</b> for the frontend and <b>NestJS/TypeScript</b> for the backend, enhancing application performance and scalability</li>
+    <li>Designed modular backend systems by leveraging <b>NestJS</b>'s <b>dependency injection</b>, <b>custom providers</b>, and <b>decorators</b>, which improved code maintainability and efficiency</li>
+    <li>Implemented enterprise-level authentication using <b>NestJS Guards</b> and <b>JWT</b> strategies with <b>role-based access control</b>, enhancing security and user management</li>
+    <li>Created comprehensive API documentation with <b>Swagger/OpenAPI</b> and maintained extensive test coverage, ensuring clarity and reliability in API usage</li>
+    <li>Drove technical decisions and mentored teams in full stack best practices, leading to improved team performance and project outcomes</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company"><a href="https://komi.io/">Komi</a>, <a href="https://devbase.us/">Devbase</a></span><span class="sep">|</span><span class="role">Full Stack Developer</span></div>
+    <div class="dates">Feb 2022 - Dec 2022</div>
+  </div>
+  <ul>
+    <li>Architected production-grade applications using <b>React.js</b> frontend and <b>NestJS/TypeScript</b> backend, enhancing application scalability and performance</li>
+    <li>Designed modular backend systems leveraging <b>NestJS</b>'s <b>dependency injection</b>, <b>custom providers</b>, and <b>decorators</b>, improving code maintainability and flexibility</li>
+    <li>Implemented enterprise-level authentication using <b>NestJS Guards</b> and <b>JWT</b> strategies with <b>role-based access control</b>, enhancing security and user management</li>
+    <li>Built optimized <b>PostgreSQL</b> database solutions with <b>TypeORM</b>, handling complex financial data relationships to ensure data integrity and performance</li>
+    <li>Created comprehensive API documentation with <b>Swagger/OpenAPI</b> while maintaining extensive test coverage, facilitating easier integration and reliability</li>
+    <li>Guided technical decisions and mentored teams in full stack best practices using <b>React.js</b>, <b>AWS</b>, and <b>Docker</b>, leading to improved project efficiency and team skill development</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company">ThinkN and Bubble, <a href="https://www.nexlesoft.com/">Nexle Corporation</a></span><span class="sep">|</span><span class="role">Full Stack Developer</span></div>
+    <div class="dates">Aug 2020 - Feb 2022</div>
+  </div>
+  <ul>
+    <li>Built responsive web interfaces using <b>React.js</b>, <b>HTML5</b>, and <b>CSS3</b> from <b>Figma</b> designs, enhancing user experience and interface accessibility</li>
+    <li>Developed backend services with <b>Node.js</b> and <b>RESTful APIs</b>, improving application performance and scalability</li>
+    <li>Managed <b>PostgreSQL</b> databases and implemented basic data operations, which ensured data integrity and supported application functionality</li>
+    <li>Collaborated with the team using <b>Git/GitHub</b> and agile practices, enhancing project coordination and delivery timelines</li>
+    <li>Contributed to authentication systems and form validations, increasing application security and user data accuracy</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company"><a href="https://www.aia.com.sg/">AIA SG Direct</a>, <a href="https://www.nexlesoft.com/">Nexle Corporation</a></span><span class="sep">|</span><span class="role">Full Stack Developer</span></div>
+    <div class="dates">Feb 2019 - Aug 2020</div>
+  </div>
+  <ul>
+    <li>Built responsive web interfaces using <b>React.js</b>, <b>HTML5</b>, and <b>CSS3</b> from <b>Figma</b> designs, enhancing user experience and interface consistency</li>
+    <li>Developed backend services with <b>Node.js</b> and <b>RESTful APIs</b>, improving application performance and scalability</li>
+    <li>Worked with <b>PostgreSQL</b> databases and implemented basic data operations, ensuring data integrity and efficient data retrieval</li>
+    <li>Collaborated with team using <b>Git/GitHub</b> and agile practices, enhancing project coordination and delivery timelines</li>
+    <li>Contributed to authentication systems and form validations, increasing application security and user data accuracy</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company">VO-VMS, <a href="https://www.nexlesoft.com/">Nexle Corporation</a></span><span class="sep">|</span><span class="role">Full Stack Developer</span></div>
+    <div class="dates">Nov 2018 - Feb 2019</div>
+  </div>
+  <ul>
+    <li>Built responsive web interfaces using <b>React.js</b>, <b>HTML5</b>, and <b>CSS3</b> from <b>Figma</b> designs, enhancing user experience and interface consistency</li>
+    <li>Developed backend services with <b>Node.js</b> and <b>RESTful APIs</b>, improving application performance and scalability</li>
+    <li>Worked with <b>PostgreSQL</b> databases and implemented basic data operations, ensuring data integrity and efficient data retrieval</li>
+    <li>Collaborated with team using <b>Git/GitHub</b> and agile practices, enhancing project coordination and delivery timelines</li>
+    <li>Contributed to authentication systems and form validations, increasing security and user data accuracy</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company">AirVinG, <a href="https://www.nexlesoft.com/">Nexle Corporation</a></span><span class="sep">|</span><span class="role">Full Stack Developer</span></div>
+    <div class="dates">Aug 2018 - Nov 2018</div>
+  </div>
+  <ul>
+    <li>Built responsive web interfaces using <b>React.js</b>, <b>HTML5</b>, and <b>CSS3</b> from <b>Figma</b> designs, enhancing user experience and interface accessibility</li>
+    <li>Developed backend services with <b>Node.js</b> and <b>RESTful APIs</b>, improving application performance and scalability</li>
+    <li>Worked with <b>PostgreSQL</b> databases and implemented basic data operations, ensuring data integrity and efficient data retrieval</li>
+    <li>Collaborated with team using <b>Git/GitHub</b> and agile practices, enhancing project coordination and delivery timelines</li>
+    <li>Contributed to authentication systems and form validations, increasing application security and user data protection</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company">OC3, <a href="https://sutrixgroup.com/">Sutrix Solution</a></span><span class="sep">|</span><span class="role"><b>AEM</b> Developer</span></div>
+    <div class="dates">May 2018 - Aug 2018</div>
+  </div>
+  <ul>
+    <li>Architected and drove enterprise-level <b>AEM</b> solutions, establishing technical direction and best practices, which improved project efficiency and consistency</li>
+    <li>Led complex system integrations and optimized performance across multiple <b>AEM</b> environments, resulting in enhanced system reliability and speed</li>
+    <li>Designed scalable component architectures and implemented robust development frameworks using <b>Java</b>, <b>HTL</b>, and <b>JavaScript</b>, leading to improved code maintainability and scalability</li>
+    <li>Spearheaded migration strategies and established governance models for content management, ensuring seamless transitions and compliance with industry standards</li>
+    <li>Mentored development teams and collaborated with stakeholders to align technical solutions with business objectives, resulting in improved team performance and project alignment</li>
+    <li>Researched and adopted emerging <b>AEM</b> features and industry best practices, enhancing project efficiency and code quality using <b>React.js</b> and <b>REST APIs</b></li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company">Brie, <a href="https://sutrixgroup.com/">Sutrix Solution</a></span><span class="sep">|</span><span class="role"><b>AEM</b> Developer</span></div>
+    <div class="dates">Aug 2017 - May 2018</div>
+  </div>
+  <ul>
+    <li>Designed and implemented complex <b>AEM</b> components and templates using <b>Java</b>, <b>HTL</b>, and <b>JavaScript</b>, enhancing the platform's functionality and user experience</li>
+    <li>Led third-party system integrations through <b>RESTful APIs</b> and custom middleware solutions, ensuring seamless data exchange and improved system interoperability</li>
+    <li>Optimized <b>AEM</b> performance through advanced caching strategies and code efficiency improvements, resulting in faster load times and enhanced user satisfaction</li>
+    <li>Mentored junior developers while collaborating with UX/UI teams to deliver scalable digital solutions, fostering a culture of continuous learning and innovation</li>
+    <li>Drove technical documentation and code review processes to maintain high quality standards, ensuring consistent and reliable software delivery</li>
+  </ul>
+</div>
+
+<div class="job">
+  <div class="job-head">
+    <div><span class="company"><a href="https://www.mandai.com/">Wildlife Reserves Singapore</a>, <a href="https://sutrixgroup.com/">Sutrix Solution</a></span><span class="sep">|</span><span class="role"><b>AEM</b> Developer</span></div>
+    <div class="dates">Jun 2017 - Aug 2017</div>
+  </div>
+  <ul>
+    <li>Developed and maintained <b>AEM</b> components using <b>Java</b>, <b>JavaScript</b>, and <b>HTML</b>, enhancing the platform's functionality and user experience</li>
+    <li>Supported content migration and authoring within the <b>AEM</b> platform, ensuring seamless content integration and consistency</li>
+    <li>Collaborated with senior developers to implement and test <b>AEM</b> templates and workflows, improving development efficiency and template reliability</li>
+    <li>Participated in code reviews and documentation to ensure quality standards, contributing to higher code quality and team knowledge sharing</li>
+    <li>Troubleshot AEM-related issues and provided technical support, resolving problems efficiently and enhancing system stability</li>
+  </ul>
+</div>
+
+<h2>EDUCATION</h2>
+<div class="edu">
+  <div class="job-head">
+    <div><span class="company"><a href="https://hcmut.edu.vn/">Ho Chi Minh City University of Technology</a></span><span class="sep">|</span><span class="role">Bachelor, Information Technology</span></div>
+    <div class="dates">Sep 2011 - Jun 2016</div>
+  </div>
+</div>
+
+<div class="certs">Certifications</div>
+
 </body>
 </html>
