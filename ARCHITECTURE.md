@@ -4,7 +4,7 @@
 
 ```
 ┌─────────────────────────────────────────┐
-│        syscraft906 Ecosystem            │
+│            videv93 Ecosystem            │
 ├─────────────────────────────────────────┤
 │                                         │
 │  ┌─────────────┐   ┌──────────────┐   │
@@ -67,7 +67,7 @@
   - Social features
   - Reading tracking
   
-- **Portfolio** (syscraft906.github.io)
+- **Portfolio** (videv93.github.io)
   - Static site
   - GitHub Pages hosted
   - Project showcase

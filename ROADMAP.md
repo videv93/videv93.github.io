@@ -46,7 +46,7 @@ Build a comprehensive learning ecosystem
 - Related: Knowledge Base, Knowledge Pipeline
 
 ### 👥 Community Building Epic
-Establish syscraft906 as a trusted community
+Establish videv93 as a trusted community
 - Estimated: Q3-Q4 2026
 - Related: Book Circle, Contributing guidelines
 

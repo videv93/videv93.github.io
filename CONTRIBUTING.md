@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-Thank you for your interest in contributing to syscraft906 projects!
+Thank you for your interest in contributing to videv93 projects!
 
 ## Getting Started
 
