@@ -59,11 +59,60 @@
     .site-nav a { margin-right: 10pt; }
   }
   @media print { .site-nav { display: none; } }
+  /* --- Code Duel challenge popup ------------------------------------- */
+  /* Screen-only: the PDF and the print stylesheet must not know it exists. */
+  @media screen {
+    .duel-launcher {
+      position: fixed; right: 18px; bottom: 18px; z-index: 40;
+      font-family: "Times New Roman", Times, serif; font-size: 10.5pt;
+      padding: 7pt 12pt; border: 0.8pt solid #1a0dab; border-radius: 999px;
+      background: #fff; color: #1a0dab; cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+    }
+    .duel-launcher:hover { background: #1a0dab; color: #fff; }
+    .duel-card {
+      position: fixed; right: 18px; bottom: 18px; z-index: 41;
+      width: 300px; max-width: calc(100vw - 36px);
+      background: #fff; color: #000;
+      border: 0.8pt solid #000; border-radius: 6px;
+      padding: 12pt 13pt 13pt 13pt;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+      font-size: 10pt; line-height: 15px;
+    }
+    .duel-card h3 { margin: 0 14pt 0 0; font-size: 12pt; line-height: 1.25; }
+    .duel-card p { margin: 5pt 0 0 0; }
+    .duel-card .duel-close {
+      position: absolute; top: 6pt; right: 8pt;
+      border: 0; background: none; cursor: pointer;
+      font: inherit; font-size: 13pt; line-height: 1; color: #666; padding: 2pt;
+    }
+    .duel-card .duel-close:hover { color: #000; }
+    .duel-card label { display: block; margin-top: 7pt; font-size: 9pt; color: #444; }
+    .duel-card input, .duel-card textarea {
+      width: 100%; box-sizing: border-box; margin-top: 2pt;
+      font-family: inherit; font-size: 10pt; color: #000;
+      padding: 4pt 5pt; border: 0.8pt solid #bbb; border-radius: 3px; background: #fff;
+    }
+    .duel-card input:focus, .duel-card textarea:focus { outline: 0; border-color: #1a0dab; }
+    .duel-card textarea { resize: vertical; min-height: 40pt; }
+    .duel-card .duel-actions { margin-top: 9pt; display: flex; gap: 8pt; align-items: center; }
+    .duel-card button.duel-send {
+      font-family: inherit; font-size: 10pt; cursor: pointer;
+      padding: 5pt 11pt; border: 0.8pt solid #1a0dab; border-radius: 3px;
+      background: #1a0dab; color: #fff;
+    }
+    .duel-card button.duel-send[disabled] { opacity: 0.55; cursor: default; }
+    .duel-card .duel-arena { font-size: 9.5pt; }
+    .duel-card .duel-status { margin-top: 7pt; font-size: 9.5pt; min-height: 12pt; }
+    .duel-card .duel-status.err { color: #b00020; }
+    .duel-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  }
+  @media print { .duel-launcher, .duel-card { display: none !important; } }
 </style>
 </head>
 <body>
 
-<div class="site-nav"><a href="/notes/">Notes</a><a href="https://github.com/videv93">GitHub</a><a href="Vi_Tran_-_Senior_Full_Stack_Developer.pdf">Download PDF</a></div>
+<div class="site-nav"><a href="/notes/">Notes</a><a href="https://github.com/videv93">GitHub</a><a href="Vi_Tran_-_Senior_Full_Stack_Developer.pdf">Download PDF</a><a href="#" id="duel-nav">Challenge me &#9876;</a></div>
 
 <h1>VI TRAN</h1>
 <div class="contact">Ho Chi Minh, Vietnam&nbsp; |&nbsp; +84-334-331-483&nbsp; |&nbsp; <a href="mailto:videv93@gmail.com">videv93@gmail.com</a>&nbsp; |&nbsp; <a href="https://www.linkedin.com/in/videv93/">LinkedIn</a>&nbsp; |&nbsp; <a href="https://github.com/videv93">Github</a>&nbsp; |&nbsp; <a href="https://videv93.github.io/">Portfolio</a></div>
@@ -269,6 +318,120 @@
 </div>
 
 <div class="certs">Certifications</div>
+
+<!-- Code Duel invitation. The card posts to the Code Duel VPS, which is the
+     only side that holds the Telegram bot token; this page is static. -->
+<button class="duel-launcher" id="duel-launcher" hidden>&#9876; Challenge me</button>
+
+<div class="duel-card" id="duel-card" role="dialog" aria-labelledby="duel-title" hidden>
+  <button class="duel-close" id="duel-close" aria-label="Close">&times;</button>
+  <h3 id="duel-title">Fancy a code duel?</h3>
+  <p>I built <a href="https://185.209.230.240.sslip.io/" target="_blank" rel="noopener">Code Duel</a> &mdash;
+     real-time 1v1 competitive programming, server-side clock, sandboxed judge.
+     Leave your name and I&rsquo;ll get a ping.</p>
+  <form id="duel-form">
+    <label for="duel-name">Your name</label>
+    <input id="duel-name" name="name" maxlength="60" required autocomplete="name">
+    <label for="duel-contact">Email or Telegram <span style="color:#888">(optional)</span></label>
+    <input id="duel-contact" name="contact" maxlength="120">
+    <label for="duel-message">Message <span style="color:#888">(optional)</span></label>
+    <textarea id="duel-message" name="message" maxlength="500" rows="2"></textarea>
+    <input class="duel-hp" id="duel-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <div class="duel-actions">
+      <button type="submit" class="duel-send" id="duel-send">Send challenge</button>
+      <a class="duel-arena" href="https://185.209.230.240.sslip.io/" target="_blank" rel="noopener">Open the arena &rarr;</a>
+    </div>
+  </form>
+  <div class="duel-status" id="duel-status" role="status"></div>
+</div>
+
+<script>
+(function () {
+  var API = "https://185.209.230.240.sslip.io/api/challenge";
+  var ARENA = "https://185.209.230.240.sslip.io/";
+  var KEY = "duel-popup-dismissed";
+
+  var card = document.getElementById("duel-card");
+  var launcher = document.getElementById("duel-launcher");
+  var form = document.getElementById("duel-form");
+  var status = document.getElementById("duel-status");
+  var send = document.getElementById("duel-send");
+
+  // localStorage throws in some privacy modes; a broken store must not take
+  // the popup down with it.
+  function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  function openCard() {
+    card.hidden = false;
+    launcher.hidden = true;
+    document.getElementById("duel-name").focus();
+  }
+  function closeCard(remember) {
+    card.hidden = true;
+    launcher.hidden = false;
+    if (remember) set(KEY, String(Date.now()));
+  }
+
+  document.getElementById("duel-close").addEventListener("click", function () { closeCard(true); });
+  launcher.addEventListener("click", function () { openCard(); });
+  document.getElementById("duel-nav").addEventListener("click", function (e) {
+    e.preventDefault();
+    openCard();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !card.hidden) closeCard(true);
+  });
+
+  // Dismissals last 30 days: long enough not to nag, short enough that a
+  // returning visitor sees the invitation again.
+  var dismissed = Number(get(KEY) || 0);
+  if (Date.now() - dismissed < 30 * 24 * 60 * 60 * 1000) {
+    launcher.hidden = false;
+  } else {
+    setTimeout(function () { if (card.hidden && launcher.hidden) openCard(); }, 6000);
+    launcher.hidden = true;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = document.getElementById("duel-name").value.trim();
+    if (!name) return;
+    send.disabled = true;
+    status.className = "duel-status";
+    status.textContent = "Sending\u2026";
+
+    fetch(API, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        name: name,
+        contact: document.getElementById("duel-contact").value.trim(),
+        message: document.getElementById("duel-message").value.trim(),
+        website: document.getElementById("duel-website").value,
+        from: location.href
+      })
+    })
+      .then(function (r) {
+        if (!r.ok) throw new Error("http " + r.status);
+        form.hidden = true;
+        status.textContent = "";
+        var done = document.createElement("p");
+        done.innerHTML =
+          "Challenge sent \u2014 I got the ping. " +
+          '<a href="' + ARENA + '" target="_blank" rel="noopener">Warm up in the arena \u2192</a>';
+        card.appendChild(done);
+        set(KEY, String(Date.now()));
+      })
+      .catch(function () {
+        send.disabled = false;
+        status.className = "duel-status err";
+        status.innerHTML =
+          'Could not reach the server. Email me at <a href="mailto:videv93@gmail.com">videv93@gmail.com</a>.';
+      });
+  });
+})();
+</script>
 
 </body>
 </html>
