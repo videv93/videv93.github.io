@@ -327,7 +327,7 @@
 <div class="duel-card" id="duel-card" role="dialog" aria-labelledby="duel-title" hidden>
   <button class="duel-close" id="duel-close" aria-label="Close">&times;</button>
   <h3 id="duel-title">Fancy a code duel?</h3>
-  <p>I built <a href="https://185.209.230.240.sslip.io/" target="_blank" rel="noopener">Code Duel</a> &mdash;
+  <p>I built <a href="https://duelcode.online/" target="_blank" rel="noopener">Code Duel</a> &mdash;
      real-time 1v1 competitive programming, server-side clock, sandboxed judge.
      Leave your name and I&rsquo;ll get a ping.</p>
   <form id="duel-form">
@@ -340,7 +340,7 @@
     <input class="duel-hp" id="duel-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
     <div class="duel-actions">
       <button type="submit" class="duel-send" id="duel-send">Send challenge</button>
-      <a class="duel-arena" href="https://185.209.230.240.sslip.io/" target="_blank" rel="noopener">Open the arena &rarr;</a>
+      <a class="duel-arena" href="https://duelcode.online/" target="_blank" rel="noopener">Open the arena &rarr;</a>
     </div>
   </form>
   <div class="duel-status" id="duel-status" role="status"></div>
@@ -360,8 +360,8 @@
 
 <script>
 (function () {
-  var API = "https://185.209.230.240.sslip.io/api/challenge";
-  var ARENA = "https://185.209.230.240.sslip.io/";
+  var API = "https://duelcode.online/api/challenge";
+  var ARENA = "https://duelcode.online/";
   var KEY = "duel-popup-dismissed";
 
   var card = document.getElementById("duel-card");
