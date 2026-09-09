@@ -2,7 +2,7 @@
 title: Notes
 ---
 
-Vườn ghi chú của [Vi Tran](/). 992 ghi chú, viết bằng tiếng Việt, **giữ nguyên thuật ngữ tiếng Anh** — vì mọi sách và mọi bài giảng đều dùng tiếng Anh.
+Vườn ghi chú của [Vi Tran](/). 1067 ghi chú, viết bằng tiếng Việt, **giữ nguyên thuật ngữ tiếng Anh** — vì mọi sách và mọi bài giảng đều dùng tiếng Anh.
 
 Đây không phải blog. Ghi chú ở đây được sửa liên tục, và `status` trong mỗi trang cho biết nó đã chín tới đâu: `seed` (mới gieo) → `growing` (đang mở rộng) → `evergreen` (đã hệ thống hoá).
 
@@ -16,6 +16,7 @@ Vườn ghi chú của [Vi Tran](/). 992 ghi chú, viết bằng tiếng Việt,
 - [[Frontend/Frontend|Frontend]] — Trình duyệt, framework, rendering.
 - [[GIS/GIS|GIS]] — Dữ liệu không gian, chiếu bản đồ, xử lý hình học.
 - [[ML/ML|ML]] — Học máy: tối ưu, mô hình, đánh giá.
+- [[Marketing/Marketing|Marketing]] — Chiến lược, thương hiệu, kênh, và đo lường nhân quả.
 - [[Math/Math|Math]] — Giải tích một biến, đại số tuyến tính, tiệm cận — nền của cả ba vault dưới.
 - [[Networking/Networking|Networking]] — Giao thức, tầng mạng, hiệu năng truyền tải.
 - [[OS/OS|OS]] — Tiến trình, bộ nhớ, hệ thống file.

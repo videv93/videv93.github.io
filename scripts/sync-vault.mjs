@@ -42,6 +42,7 @@ const TOPICS = {
   Physics: "Cơ học, trường, và các mô hình liên tục.",
   UIUX: "Nguyên tắc thị giác, design system, tương tác.",
   SEO: "Crawl, index, và xếp hạng.",
+  Marketing: "Chiến lược, thương hiệu, kênh, và đo lường nhân quả.",
 }
 
 // Notes write prices as a bare `$5.000`. Markdown reads the next `$` on the line
