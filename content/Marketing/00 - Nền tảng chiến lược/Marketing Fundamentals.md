@@ -16,12 +16,12 @@ status: evergreen
 
 **4P (Kotler)** — bộ điều khiển thật của marketing:
 
-| P | Câu hỏi | Ai thường nắm ở công ty thật |
-|---|---|---|
-| **Product** | Bán cái gì, cho job nào | Product/PM — marketing hay bị loại |
-| **Price** | Bắt giá bao nhiêu, cấu trúc nào | Finance/Sales — **đòn bẩy mạnh nhất, bị bỏ quên nhất** |
-| **Place** | Bán ở đâu, qua ai | Sales/BD |
-| **Promotion** | Nói gì, ở đâu | Marketing — thường là *chỉ* cái này |
+| P             | Câu hỏi                         | Ai thường nắm ở công ty thật                           |
+| ------------- | ------------------------------- | ------------------------------------------------------ |
+| **Product**   | Bán cái gì, cho job nào         | Product/PM — marketing hay bị loại                     |
+| **Price**     | Bắt giá bao nhiêu, cấu trúc nào | Finance/Sales — **đòn bẩy mạnh nhất, bị bỏ quên nhất** |
+| **Place**     | Bán ở đâu, qua ai               | Sales/BD                                               |
+| **Promotion** | Nói gì, ở đâu                   | Marketing — thường là *chỉ* cái này                    |
 
 **7P** thêm cho dịch vụ: People, Process, Physical evidence.
 

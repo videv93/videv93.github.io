@@ -37,11 +37,11 @@ Byron Sharp và Ehrenberg-Bass Institute đưa ra dữ liệu panel nhiều th�
 
 **Chỗ hai bên thực sự đồng thuận** (nhiều hơn người ta tưởng):
 
-| Điểm | Cả hai đồng ý |
-|---|---|
-| Phải dễ nhận ra | STP gọi là differentiation, EB gọi là distinctiveness |
-| Phải có mặt lúc khách cần | STP gọi là relevance, EB gọi là [[Category Entry Points]] |
-| Không thể phục vụ mọi người bằng mọi thứ | Ràng buộc nguồn lực là thật ở cả hai |
+| Điểm                                     | Cả hai đồng ý                                             |
+| ---------------------------------------- | --------------------------------------------------------- |
+| Phải dễ nhận ra                          | STP gọi là differentiation, EB gọi là distinctiveness     |
+| Phải có mặt lúc khách cần                | STP gọi là relevance, EB gọi là [[Category Entry Points]] |
+| Không thể phục vụ mọi người bằng mọi thứ | Ràng buộc nguồn lực là thật ở cả hai                      |
 
 ## 3. Cạm bẫy
 

@@ -14,7 +14,7 @@ status: evergreen
 |---|---|---|
 | **Confidentiality** | Ai được đọc? | Rò rỉ dữ liệu, [[Broken Access Control]] |
 | **Integrity** | Ai được sửa, và ta có biết không? | Sửa bản ghi ngầm, [[Software Supply Chain Attacks]] |
-| **Availability** | Hệ thống còn phục vụ được không? | DDoS, [[Ransomware Anatomy]] |
+| **Availability** | Hệ thống còn phục vụ được không? | [[DDoS & Availability Attacks]], [[Ransomware Anatomy]] |
 
 CIA là khởi điểm, không phải đích. Ba thuộc tính hay bị bỏ quên:
 

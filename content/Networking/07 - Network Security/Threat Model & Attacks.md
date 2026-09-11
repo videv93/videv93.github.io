@@ -26,7 +26,7 @@ Thêm hai cái thường bị bỏ quên: **non-repudiation** (không chối b�
 | L7 | DNS cache poisoning, HTTP request smuggling, cache poisoning | DNSSEC, chuẩn hoá parser, WAF |
 | Xuyên tầng | **MITM**, downgrade, replay, **DDoS khuếch đại** | TLS + HSTS, nonce, BCP 38 |
 
-**DDoS khuếch đại**: kẻ tấn công giả IP nạn nhân, gửi query nhỏ tới dịch vụ UDP mở, dịch vụ trả response lớn tới nạn nhân. Hệ số khuếch đại: DNS ~50×, NTP `monlist` ~500×, memcached ~50000×. → **Không mở dịch vụ UDP không xác thực ra Internet** → [[UDP]].
+**DDoS khuếch đại**: kẻ tấn công giả IP nạn nhân, gửi query nhỏ tới dịch vụ UDP mở, dịch vụ trả response lớn tới nạn nhân. Hệ số khuếch đại: DNS ~50×, NTP `monlist` ~500×, memcached ~50000×. → **Không mở dịch vụ UDP không xác thực ra Internet** → [[UDP]]. Chi tiết ba lớp tấn công và kiến trúc phòng thủ → [[DDoS & Availability Attacks]].
 
 ## 3. Nguyên tắc
 1. **Giả định mạng là thù địch (zero trust).** Mã hoá và xác thực **cả trong nội bộ**, không chỉ ở biên. Chu vi mạng không còn là ranh giới tin cậy.
@@ -60,4 +60,4 @@ Thêm hai cái thường bị bỏ quên: **non-repudiation** (không chối b�
 - RFC 2827 / BCP 38 — *Network Ingress Filtering*: https://www.rfc-editor.org/rfc/rfc2827
 
 ## Liên kết
-[[Cryptographic Building Blocks]] · [[Firewall & Filtering]] · [[TLS]] · [[Networking]]
+[[Cryptographic Building Blocks]] · [[Firewall & Filtering]] · [[DDoS & Availability Attacks]] · [[TLS]] · [[Networking]]

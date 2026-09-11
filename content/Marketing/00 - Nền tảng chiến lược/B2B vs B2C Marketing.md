@@ -8,14 +8,14 @@ status: evergreen
 
 ## 1. Khác biệt thật
 
-| Chiều | B2C | B2B |
-|---|---|---|
-| Người quyết | 1–2 | **6–10 người** trong buying group |
-| Chu kỳ | Phút → tuần | **Tháng → nhiều quý** |
-| Giá trị đơn | Thấp, tần suất cao | Cao, tần suất rất thấp |
-| Rủi ro cá nhân người mua | Thấp | **Cao — mua sai thì mất uy tín nghề nghiệp** |
-| Thị trường "in-market" tại một thời điểm | Phần lớn | **~5%** (95% chưa mua bây giờ) |
-| Đo lường | Có thể dùng test ngắn | Rất khó — chu kỳ dài hơn cửa sổ đo |
+| Chiều                                    | B2C                   | B2B                                          |
+| ---------------------------------------- | --------------------- | -------------------------------------------- |
+| Người quyết                              | 1–2                   | **6–10 người** trong buying group            |
+| Chu kỳ                                   | Phút → tuần           | **Tháng → nhiều quý**                        |
+| Giá trị đơn                              | Thấp, tần suất cao    | Cao, tần suất rất thấp                       |
+| Rủi ro cá nhân người mua                 | Thấp                  | **Cao — mua sai thì mất uy tín nghề nghiệp** |
+| Thị trường "in-market" tại một thời điểm | Phần lớn              | **~5%** (95% chưa mua bây giờ)               |
+| Đo lường                                 | Có thể dùng test ngắn | Rất khó — chu kỳ dài hơn cửa sổ đo           |
 
 > [!note] Huyền thoại "B2B lý trí"
 > Nghiên cứu của LinkedIn B2B Institute và Ehrenberg-Bass cho thấy quyết định B2B chịu ảnh hưởng cảm xúc và thương hiệu mạnh không kém B2C — thậm chí mạnh hơn ở chỗ **giảm rủi ro cảm nhận**. "Không ai bị đuổi việc vì chọn IBM" là câu nói về cảm xúc, không phải về thông số kỹ thuật.

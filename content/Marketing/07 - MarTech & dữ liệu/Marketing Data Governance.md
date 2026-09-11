@@ -64,11 +64,11 @@ Không có mục này thì mỗi báo cáo tự định nghĩa lại, và không
 
 ## Công cụ
 
-| Tên | Đặc điểm | Link |
-|---|---|---|
-| Google Campaign URL Builder | Tạo UTM chuẩn | https://ga-dev-tools.google/campaign-url-builder/ |
-| dbt | Định nghĩa chỉ số tập trung, có test | https://www.getdbt.com/ |
-| Great Expectations | Kiểm chất lượng dữ liệu tự động | https://greatexpectations.io/ |
+| Tên                         | Đặc điểm                             | Link                                              |
+| --------------------------- | ------------------------------------ | ------------------------------------------------- |
+| Google Campaign URL Builder | Tạo UTM chuẩn                        | https://ga-dev-tools.google/campaign-url-builder/ |
+| dbt                         | Định nghĩa chỉ số tập trung, có test | https://www.getdbt.com/                           |
+| Great Expectations          | Kiểm chất lượng dữ liệu tự động      | https://greatexpectations.io/                     |
 
 ## Tham khảo
 

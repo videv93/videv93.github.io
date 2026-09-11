@@ -13,27 +13,27 @@ status: growing
 
 ## 1. Các thành phần chính
 
-| Sản phẩm | Việc | Tương đương trong stack |
-|---|---|---|
-| **Experience Platform (AEP)** | Nền dữ liệu, hồ sơ thống nhất | Nền tảng dữ liệu |
-| **Real-Time CDP** | Hợp nhất & kích hoạt phân khúc | [[Customer Data Platform]] |
-| **Adobe Analytics** | Phân tích hành vi, Analysis Workspace | [[Marketing Analytics Stack]] |
-| **Adobe Target** | Test & cá nhân hoá | [[Personalization Engines]] |
-| **Journey Optimizer (AJO)** | Điều phối hành trình đa kênh | [[Marketing Automation]] |
-| **Marketo Engage** | Automation B2B, chấm điểm lead | [[Lead Generation and Nurture]] |
-| **Experience Manager (AEM)** | CMS + DAM | Nội dung & tài sản |
-| **Workfront** | Quản lý công việc marketing | [[Marketing Creative Operations]] |
-| **Adobe Express / Firefly** | Sản xuất tài sản | [[Adobe Express Workflow]] |
+| Sản phẩm                      | Việc                                  | Tương đương trong stack           |
+| ----------------------------- | ------------------------------------- | --------------------------------- |
+| **Experience Platform (AEP)** | Nền dữ liệu, hồ sơ thống nhất         | Nền tảng dữ liệu                  |
+| **Real-Time CDP**             | Hợp nhất & kích hoạt phân khúc        | [[Customer Data Platform]]        |
+| **Adobe Analytics**           | Phân tích hành vi, Analysis Workspace | [[Marketing Analytics Stack]]     |
+| **Adobe Target**              | Test & cá nhân hoá                    | [[Personalization Engines]]       |
+| **Journey Optimizer (AJO)**   | Điều phối hành trình đa kênh          | [[Marketing Automation]]          |
+| **Marketo Engage**            | Automation B2B, chấm điểm lead        | [[Lead Generation and Nurture]]   |
+| **Experience Manager (AEM)**  | CMS + DAM                             | Nội dung & tài sản                |
+| **Workfront**                 | Quản lý công việc marketing           | [[Marketing Creative Operations]] |
+| **Adobe Express / Firefly**   | Sản xuất tài sản                      | [[Adobe Express Workflow]]        |
 
 ## 2. Adobe Analytics vs GA4 — khác biệt đáng biết
 
-| | Adobe Analytics | GA4 |
-|---|---|---|
-| Mô hình dữ liệu | Linh hoạt, tuỳ biến sâu (eVar, prop) | Sự kiện + tham số, cố định hơn |
-| Phân tích tự do | ✅ Analysis Workspace rất mạnh | Hạn chế hơn |
-| Chi phí | Cao, theo hợp đồng | Miễn phí / 360 |
-| Đường cong học | Dốc | Thoải hơn |
-| Xuất dữ liệu thô | Có | Có, qua BigQuery — [[GA4 for SEO]] |
+|                  | Adobe Analytics                      | GA4                                |
+| ---------------- | ------------------------------------ | ---------------------------------- |
+| Mô hình dữ liệu  | Linh hoạt, tuỳ biến sâu (eVar, prop) | Sự kiện + tham số, cố định hơn     |
+| Phân tích tự do  | ✅ Analysis Workspace rất mạnh        | Hạn chế hơn                        |
+| Chi phí          | Cao, theo hợp đồng                   | Miễn phí / 360                     |
+| Đường cong học   | Dốc                                  | Thoải hơn                          |
+| Xuất dữ liệu thô | Có                                   | Có, qua BigQuery — [[GA4 for SEO]] |
 
 ## 3. Khi nào bộ công cụ này hợp lý
 

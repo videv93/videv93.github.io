@@ -86,6 +86,7 @@ updated: 2026-08-28
 - [[TLS]] — bắt tay 1-RTT, SNI/ALPN, HSTS, mTLS
 - [[Authentication Protocols]] — OAuth vs OIDC, JWT, WebAuthn
 - [[Firewall & Filtering]] — default deny, conntrack, micro-segmentation
+- [[DDoS & Availability Attacks]] — volumetric/protocol/L7, amplification, Anycast, load shedding
 - [[VPN & IPsec]] — IPsec vs WireGuard, MSS clamping, ZTNA
 
 ## 08 — Thực hành & Công cụ

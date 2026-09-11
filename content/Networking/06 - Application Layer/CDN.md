@@ -24,7 +24,7 @@ status: growing
 ## 3. Ngoài cache tĩnh
 - **Dynamic acceleration**: giữ kết nối TCP/TLS ấm từ PoP tới origin → tiết kiệm bắt tay, dù nội dung không cache được.
 - **Edge compute** (Workers, Lambda@Edge): A/B test, viết lại request, xác thực token ngay tại biên.
-- **Bảo vệ**: hấp thụ DDoS, WAF, bot management → [[Threat Model & Attacks]].
+- **Bảo vệ**: hấp thụ DDoS, WAF, bot management → [[DDoS & Availability Attacks]] · [[Threat Model & Attacks]].
 - **TLS termination ở biên** → bắt tay nhanh hơn nhiều nhờ RTT ngắn → [[TLS]].
 
 ## 4. Cạm bẫy hay gặp
